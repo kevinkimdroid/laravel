@@ -7482,17 +7482,6 @@
             "time": "2022-02-21T01:04:05+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "phpunit/php-code-coverage",
-            "version": "11.0.12",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2c1ed04922802c15e1de5d7447b4856de949cf56"
-            },
-            "dist": {
-                "type": "zip",
-=======
             "name": "phpdocumentor/reflection-common",
             "version": "2.2.0",
             "source": {
@@ -7724,7 +7713,6 @@
             },
             "dist": {
                 "type": "zip",
->>>>>>> aa98f9c3a3ad6060386eae9105bb250fad44d8eb
                 "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2c1ed04922802c15e1de5d7447b4856de949cf56",
                 "reference": "2c1ed04922802c15e1de5d7447b4856de949cf56",
                 "shasum": ""
