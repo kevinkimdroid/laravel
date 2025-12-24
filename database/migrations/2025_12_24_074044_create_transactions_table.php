@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contributions', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id');
-            $table->decimal('amount', 12, 2);
-            $table->date('contribution_date');
-            $table->string('transaction_ref');
+            $table->foreignId('account_id');
+            $table->string('income');
+            $table->string('expense');
+            $table->date('transaction_date');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contributions');
+        Schema::dropIfExists('transactions');
     }
 };

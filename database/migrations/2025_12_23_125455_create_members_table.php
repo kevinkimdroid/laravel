@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('member_no')->unique();
             $table->string('name');
+            $table->string('initials');
+            $table->string('registration_amount_paid');
+            $table->string('paid_to_date');
             $table->string('phone')->nullable();
             $table->string('status')->default('ACTIVE');
             $table->timestamps(); // creates created_at & updated_at
