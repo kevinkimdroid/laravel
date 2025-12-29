@@ -38,6 +38,33 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Initials</label>
+        <input type="text"
+               name="initials"
+               class="form-control"
+               value="{{ old('initials', $member->initials) }}"
+               required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Registration Amount Paid</label>
+        <input type="text"
+               name="registration_amount_paid"
+               class="form-control"
+               value="{{ old('registration_amount_paid', $member->registration_amount_paid) }}"
+               required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Paid To Date</label>
+        <input type="text"
+               name="paid_to_date"
+               class="form-control"
+               value="{{ old('paid_to_date', $member->paid_to_date) }}"
+               required>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Phone</label>
         <input type="text"
                name="phone"

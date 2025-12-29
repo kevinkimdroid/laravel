@@ -3,23 +3,31 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    private $role;
-
-    public function __construct($role = null)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string  $role
+     */
+    public function handle(Request $request, Closure $next, string $role)
     {
-        $this->role = $role;
-    }
+        $user = Auth::user();
 
-    public function handle($request, Closure $next, $role)
-    {
-        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== $role) {
-            // redirect to login page if role doesn’t match
-            header('Location: /login');
-            exit;
+        if (! $user) {
+            // Not logged in: send to login
+            return redirect()->route('login');
         }
+
+        if (! method_exists($user, 'hasRole') || ! $user->hasRole($role)) {
+            abort(403, 'Unauthorized');
+        }
+
         return $next($request);
     }
 }

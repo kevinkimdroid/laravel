@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'member_id',
     ];
 
     /**
@@ -44,5 +46,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+    /**
+     * Temporary role helper used by routes.
+     *
+     * This assumes you will eventually add a "role" column
+     * (e.g. 'admin' or 'member') to the users table.
+     */
+    public function hasRole(string $role): bool
+    {
+        return ($this->role ?? 'member') === $role;
     }
 }

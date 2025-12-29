@@ -10,6 +10,17 @@ use App\Models\Contribution;
 class MemberController extends Controller
 {
     /**
+     * Member dashboard.
+     *
+     * For now, just redirect to the members list.
+     * You can later replace this with a dedicated member dashboard view.
+     */
+    public function dashboard()
+    {
+        return redirect()->route('members.index');
+    }
+
+    /**
      * Display a listing of the members.
      */
     public function index()
@@ -50,21 +61,21 @@ public function statement(Member $member)
      */
     public function store(Request $request)
     {
-        // Validate the request
-        $request->validate([
+        // Validate the request according to the migration structure
+        $validated = $request->validate([
             'member_no' => 'required|unique:members,member_no|max:50',
             'name' => 'required|string|max:150',
+            'initials' => 'required|string|max:50',
+            'registration_amount_paid' => 'required|string|max:191',
+            'paid_to_date' => 'required|string|max:191',
             'phone' => 'nullable|string|max:50',
-            'status' => 'nullable|string|in:ACTIVE,INACTIVE'
+            'status' => 'nullable|string|in:ACTIVE,INACTIVE',
         ]);
 
         // Create the member
-        Member::create([
-            'member_no' => $request->member_no,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'status' => $request->status ?? 'ACTIVE',
-        ]);
+        Member::create(array_merge($validated, [
+            'status' => $validated['status'] ?? 'ACTIVE',
+        ]));
 
         // Redirect back to index with success message
         return redirect()->route('members.index')
@@ -84,14 +95,17 @@ public function statement(Member $member)
      */
     public function update(Request $request, Member $member)
     {
-        $request->validate([
+        $validated = $request->validate([
             'member_no' => "required|unique:members,member_no,{$member->id}|max:50",
             'name' => 'required|string|max:150',
+            'initials' => 'required|string|max:50',
+            'registration_amount_paid' => 'required|string|max:191',
+            'paid_to_date' => 'required|string|max:191',
             'phone' => 'nullable|string|max:50',
-            'status' => 'nullable|string|in:ACTIVE,INACTIVE'
+            'status' => 'nullable|string|in:ACTIVE,INACTIVE',
         ]);
 
-        $member->update($request->only(['member_no', 'name', 'phone', 'status']));
+        $member->update($validated);
 
         return redirect()->route('members.index')
                          ->with('success', 'Member updated successfully!');

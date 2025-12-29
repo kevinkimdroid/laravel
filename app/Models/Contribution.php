@@ -14,7 +14,8 @@ class Contribution extends Model
     protected $fillable = [
         'member_id',
         'amount',
-        'contribution_date'
+        'contribution_date',
+        'transaction_ref',
     ];
 
     protected $casts = [
