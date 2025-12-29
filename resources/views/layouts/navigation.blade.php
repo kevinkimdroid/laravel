@@ -78,13 +78,22 @@
                                     Profile
                                 </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <form method="POST" action="{{ route('logout') }}">
+                    <li class="nav-item d-flex align-items-center">
+                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-outline-light btn-sm">
-                                Logout
+                            <button type="submit" class="btn btn-outline-light btn-sm px-3">
+                                <strong>Logout</strong>
                             </button>
                         </form>
                     </li>

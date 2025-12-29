@@ -13,9 +13,10 @@ class ContributionController extends Controller
     /**
      * Display a listing of contributions.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $year = now()->year;
+        $year = $request->get('year', now()->year);
+        $year = (int) $year; // Ensure it's an integer
 
         // Aggregate contributions per member per month for the selected year
         $aggregated = Contribution::selectRaw('member_id, YEAR(contribution_date) as year, MONTH(contribution_date) as month, SUM(amount) as total')
@@ -300,8 +301,58 @@ class ContributionController extends Controller
     }
 
     /**
+     * Download CSV template file.
+     */
+    public function downloadTemplate()
+    {
+        $filename = 'contributions_import_template.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8 (helps Excel display correctly)
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header row with monthly columns
+            fputcsv($file, [
+                'member_no', 
+                'member_name',
+                'initials', 
+                'year', 
+                'jan', 
+                'feb', 
+                'mar', 
+                'apr', 
+                'may', 
+                'jun', 
+                'jul', 
+                'aug', 
+                'sep', 
+                'oct', 
+                'nov', 
+                'dec', 
+                'registration_fee'
+            ]);
+            
+            // Example rows
+            fputcsv($file, ['M001', 'John Doe', 'JD', '2024', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '250.00', '1000.00']);
+            fputcsv($file, ['M002', 'Sarah Miller', 'SM', '2024', '250.00', '250.00', '500.00', '250.00', '', '', '', '', '', '', '', '', '1000.00']);
+            fputcsv($file, ['M003', 'Alex Brown', 'AB', '2024', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
      * Handle CSV import for historic contributions.
-     * Expected CSV format with columns: member_no, amount, contribution_date (YYYY-MM-DD)
+     * Expected CSV format with columns: member_no, initials, year, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, registration_fee
      */
     public function import(Request $request)
     {
@@ -311,37 +362,109 @@ class ContributionController extends Controller
 
         $path = $request->file('file')->getRealPath();
 
+        // Try to detect and handle BOM (Byte Order Mark) and encoding issues
+        $content = file_get_contents($path);
+        
+        // Remove BOM if present
+        if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+            $content = substr($content, 3);
+            file_put_contents($path, $content);
+        }
+
+        // Try different delimiters (comma, semicolon, tab)
+        $delimiters = [',', ';', "\t"];
+        $handle = null;
+        $header = null;
+        $usedDelimiter = ',';
+
+        foreach ($delimiters as $delimiter) {
+            $handle = fopen($path, 'r');
+            if (!$handle) {
+                continue;
+            }
+            
+            $testHeader = fgetcsv($handle, 0, $delimiter);
+            fclose($handle);
+            
+            if ($testHeader && count($testHeader) > 3) {
+                $header = $testHeader;
+                $usedDelimiter = $delimiter;
+                break;
+            }
+        }
+
+        if (!$header || count($header) < 3) {
+            return back()->withErrors(['file' => 'CSV file must have a header row. Please ensure your file is saved as CSV (comma-separated) format.']);
+        }
+
+        // Normalize header (trim, remove BOM, and lowercase for case-insensitive matching)
+        $header = array_map(function($col) {
+            // Remove BOM and other invisible characters
+            $col = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $col);
+            $col = trim($col);
+            $col = trim($col, "\xEF\xBB\xBF"); // Remove BOM if still present
+            return strtolower($col);
+        }, $header);
+
+        // Reopen file with detected delimiter
         $handle = fopen($path, 'r');
-        if (! $handle) {
+        if (!$handle) {
             return back()->withErrors(['file' => 'Unable to read uploaded file.']);
         }
 
-        // Read header row and map column indices
-        $header = fgetcsv($handle, 0, ',');
-        if (!$header || count($header) < 3) {
-            fclose($handle);
-            return back()->withErrors(['file' => 'CSV file must have a header row with columns: member_no, amount, contribution_date (registration_fee is optional)']);
+        // Skip BOM if present
+        $firstChar = fread($handle, 3);
+        if ($firstChar !== "\xEF\xBB\xBF") {
+            rewind($handle);
         }
 
-        // Normalize header (trim and lowercase for case-insensitive matching)
+        // Read header again with correct delimiter
+        $header = fgetcsv($handle, 0, $usedDelimiter);
         $header = array_map(function($col) {
-            return strtolower(trim($col));
+            $col = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $col);
+            $col = trim($col);
+            $col = trim($col, "\xEF\xBB\xBF");
+            return strtolower($col);
         }, $header);
 
         // Find column indices
         $memberNoIndex = array_search('member_no', $header);
-        $amountIndex = array_search('amount', $header);
-        $dateIndex = array_search('contribution_date', $header);
+        $memberNameIndex = array_search('member_name', $header);
+        $initialsIndex = array_search('initials', $header);
+        $yearIndex = array_search('year', $header);
+        $monthIndices = [
+            'jan' => array_search('jan', $header),
+            'feb' => array_search('feb', $header),
+            'mar' => array_search('mar', $header),
+            'apr' => array_search('apr', $header),
+            'may' => array_search('may', $header),
+            'jun' => array_search('jun', $header),
+            'jul' => array_search('jul', $header),
+            'aug' => array_search('aug', $header),
+            'sep' => array_search('sep', $header),
+            'oct' => array_search('oct', $header),
+            'nov' => array_search('nov', $header),
+            'dec' => array_search('dec', $header),
+        ];
         $registrationFeeIndex = array_search('registration_fee', $header); // Optional column
 
         // Validate required columns exist
-        if ($memberNoIndex === false || $amountIndex === false || $dateIndex === false) {
+        if ($memberNoIndex === false || $yearIndex === false) {
             fclose($handle);
             $missing = [];
             if ($memberNoIndex === false) $missing[] = 'member_no';
-            if ($amountIndex === false) $missing[] = 'amount';
-            if ($dateIndex === false) $missing[] = 'contribution_date';
-            return back()->withErrors(['file' => 'CSV file is missing required columns: ' . implode(', ', $missing)]);
+            if ($yearIndex === false) $missing[] = 'year';
+            
+            // Show what columns were actually found for debugging
+            $foundColumns = implode(', ', array_filter($header, function($col) {
+                return !empty($col);
+            }));
+            
+            return back()->withErrors([
+                'file' => 'CSV file is missing required columns: ' . implode(', ', $missing) . 
+                         '. Found columns: ' . ($foundColumns ?: 'none') . 
+                         '. Please ensure your CSV has a header row with: member_no, member_name (optional), initials (optional), year, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, registration_fee (optional)'
+            ]);
         }
 
         $added = 0;
@@ -355,8 +478,10 @@ class ContributionController extends Controller
         );
 
         $lineNumber = 1; // Header is line 1
+        $monthNames = ['jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4, 'may' => 5, 'jun' => 6,
+                      'jul' => 7, 'aug' => 8, 'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12];
 
-        while (($row = fgetcsv($handle, 0, ',')) !== false) {
+        while (($row = fgetcsv($handle, 0, $usedDelimiter)) !== false) {
             $lineNumber++;
 
             // Skip empty rows
@@ -364,17 +489,11 @@ class ContributionController extends Controller
                 continue;
             }
 
-            // Validate row has enough columns
-            if (count($row) <= max($memberNoIndex, $amountIndex, $dateIndex)) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Insufficient columns";
-                continue;
-            }
-
             // Extract values by column index
             $memberNo = trim($row[$memberNoIndex] ?? '');
-            $amount = trim($row[$amountIndex] ?? '');
-            $date = trim($row[$dateIndex] ?? '');
+            $memberName = $memberNameIndex !== false ? trim($row[$memberNameIndex] ?? '') : '';
+            $initials = $initialsIndex !== false ? trim($row[$initialsIndex] ?? '') : '';
+            $year = trim($row[$yearIndex] ?? '');
 
             // Validate member_no
             if (empty($memberNo)) {
@@ -383,11 +502,40 @@ class ContributionController extends Controller
                 continue;
             }
 
+            // Validate year
+            if (empty($year) || !is_numeric($year)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Invalid or missing year '{$year}'";
+                continue;
+            }
+
+            $year = (int) $year;
+            if ($year < 2000 || $year > (now()->year + 1)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Year '{$year}' is out of valid range";
+                continue;
+            }
+
             $member = Member::where('member_no', $memberNo)->first();
             if (! $member) {
                 $skipped++;
                 $errors[] = "Line {$lineNumber}: Member with member_no '{$memberNo}' not found";
                 continue;
+            }
+
+            // Update member name if provided
+            if (!empty($memberName)) {
+                $member->name = $memberName;
+            }
+
+            // Update initials if provided
+            if (!empty($initials)) {
+                $member->initials = $initials;
+            }
+
+            // Save member updates if any changes were made
+            if (!empty($memberName) || !empty($initials)) {
+                $member->save();
             }
 
             // Handle registration_fee if present in CSV (optional column)
@@ -399,75 +547,101 @@ class ContributionController extends Controller
                 }
             }
 
-            // Validate amount
-            if (empty($amount) || !is_numeric($amount)) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Invalid amount '{$amount}'";
-                continue;
-            }
-
-            $amount = (float) $amount;
-            if ($amount <= 0) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Amount must be greater than 0";
-                continue;
-            }
-
-            // Validate date (expecting YYYY-MM-DD format)
-            if (empty($date)) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Missing contribution_date";
-                continue;
-            }
-
-            try {
-                // Try to parse date - accept YYYY-MM-DD format
-                $contributionDate = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
-                if ($contributionDate->format('Y-m-d') !== $date) {
-                    throw new \Exception('Date format mismatch');
+            // Process monthly contributions
+            $monthlyContributions = 0;
+            foreach ($monthIndices as $monthName => $monthIndex) {
+                if ($monthIndex === false) {
+                    continue; // Skip if column not found
                 }
-                $contributionDate = $contributionDate->toDateString();
-            } catch (\Exception $e) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Invalid date format '{$date}' (expected YYYY-MM-DD)";
-                continue;
+
+                $monthAmount = trim($row[$monthIndex] ?? '');
+                
+                // Skip empty months
+                if (empty($monthAmount)) {
+                    continue;
+                }
+
+                // Validate amount
+                if (!is_numeric($monthAmount)) {
+                    $errors[] = "Line {$lineNumber}: Invalid amount '{$monthAmount}' for {$monthName}";
+                    continue;
+                }
+
+                $amount = (float) $monthAmount;
+                if ($amount <= 0) {
+                    continue; // Skip zero or negative amounts
+                }
+
+                // Create date for this month (first day of the month)
+                $monthNumber = $monthNames[$monthName];
+                try {
+                    $contributionDate = \Carbon\Carbon::create($year, $monthNumber, 15)->toDateString();
+                } catch (\Exception $e) {
+                    $errors[] = "Line {$lineNumber}: Invalid date for {$monthName} in year {$year}";
+                    continue;
+                }
+
+                // Check if contribution already exists for this member/month/year
+                $exists = Contribution::where('member_id', $member->id)
+                    ->whereYear('contribution_date', $year)
+                    ->whereMonth('contribution_date', $monthNumber)
+                    ->exists();
+
+                if ($exists) {
+                    // Update existing contribution instead of skipping
+                    $existing = Contribution::where('member_id', $member->id)
+                        ->whereYear('contribution_date', $year)
+                        ->whereMonth('contribution_date', $monthNumber)
+                        ->first();
+                    
+                    if ($existing) {
+                        $oldAmount = $existing->amount;
+                        $diff = $amount - $oldAmount;
+                        
+                        $existing->update(['amount' => $amount]);
+                        
+                        if ($diff != 0) {
+                            Transaction::create([
+                                'account_id' => $account->id,
+                                'income' => $diff > 0 ? $diff : 0,
+                                'expense' => $diff < 0 ? abs($diff) : 0,
+                                'transaction_date' => $contributionDate,
+                            ]);
+                            $account->increment('balance', $diff);
+                        }
+                        $monthlyContributions++;
+                    }
+                } else {
+                    // Create new contribution
+                    $ref = 'IMPORT-' . now()->format('YmdHis') . '-' . $member->id . '-' . $lineNumber . '-' . $monthName;
+
+                    try {
+                        Contribution::create([
+                            'member_id' => $member->id,
+                            'amount' => $amount,
+                            'contribution_date' => $contributionDate,
+                            'transaction_ref' => $ref,
+                        ]);
+
+                        Transaction::create([
+                            'account_id' => $account->id,
+                            'income' => $amount,
+                            'expense' => 0,
+                            'transaction_date' => $contributionDate,
+                        ]);
+
+                        $account->increment('balance', $amount);
+                        $monthlyContributions++;
+                        $added++;
+                    } catch (\Exception $e) {
+                        $errors[] = "Line {$lineNumber}: Error saving contribution for {$monthName} - " . $e->getMessage();
+                    }
+                }
             }
 
-            // Check if contribution already exists (optional: prevent duplicates)
-            $exists = Contribution::where('member_id', $member->id)
-                ->where('contribution_date', $contributionDate)
-                ->where('amount', $amount)
-                ->exists();
-
-            if ($exists) {
+            if ($monthlyContributions == 0) {
                 $skipped++;
-                $errors[] = "Line {$lineNumber}: Contribution already exists for member {$memberNo} on {$contributionDate}";
-                continue;
-            }
-
-            // Create contribution
-            $ref = 'IMPORT-' . now()->format('YmdHis') . '-' . $member->id . '-' . $lineNumber;
-
-            try {
-                Contribution::create([
-                    'member_id' => $member->id,
-                    'amount' => $amount,
-                    'contribution_date' => $contributionDate,
-                    'transaction_ref' => $ref,
-                ]);
-
-                Transaction::create([
-                    'account_id' => $account->id,
-                    'income' => $amount,
-                    'expense' => 0,
-                    'transaction_date' => $contributionDate,
-                ]);
-
-                $account->increment('balance', $amount);
-                $added++;
-            } catch (\Exception $e) {
-                $skipped++;
-                $errors[] = "Line {$lineNumber}: Error saving contribution - " . $e->getMessage();
+                $errors[] = "Line {$lineNumber}: No valid monthly contributions found for member {$memberNo}";
             }
         }
 
@@ -476,7 +650,7 @@ class ContributionController extends Controller
         $result = [
             'added' => $added,
             'skipped' => $skipped,
-            'errors' => array_slice($errors, 0, 50) // Limit to first 50 errors
+            'errors' => array_slice($errors, 0, 50), // Limit to first 50 errors
         ];
 
         return redirect()->route('contributions.index')

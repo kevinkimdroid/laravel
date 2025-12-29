@@ -114,6 +114,8 @@ Route::middleware('auth')->group(function () {
             ->name('contributions.import.form');
         Route::post('contributions-import', [ContributionController::class, 'import'])
             ->name('contributions.import');
+        Route::get('contributions-template', [ContributionController::class, 'downloadTemplate'])
+            ->name('contributions.template');
 
         // Expenses / financial overview
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');

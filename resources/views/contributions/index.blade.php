@@ -5,7 +5,19 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Contributions Overview ({{ $year }})</h3>
+    <div>
+        <h3 class="mb-0">Contributions Overview</h3>
+        <form method="GET" action="{{ route('contributions.index') }}" class="d-inline-flex align-items-center mt-2">
+            <label for="year" class="form-label me-2 mb-0">Year:</label>
+            <select name="year" id="year" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                @for($y = now()->year; $y >= now()->year - 10; $y--)
+                    <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
+                        {{ $y }}
+                    </option>
+                @endfor
+            </select>
+        </form>
+    </div>
     <div>
         <a href="{{ route('contributions.import.form') }}" class="btn btn-outline-secondary me-2">
             Import CSV
@@ -26,7 +38,7 @@
 
     <div class="alert {{ $added > 0 ? 'alert-success' : 'alert-warning' }} alert-dismissible fade show">
         <strong>CSV Import Complete:</strong>
-        Successfully imported <strong>{{ $added }}</strong> contributions.
+        Successfully imported <strong>{{ $added }}</strong> monthly contributions.
         @if ($skipped > 0)
             <strong>{{ $skipped }}</strong> rows were skipped (invalid data or missing members).
         @endif
@@ -47,8 +59,8 @@
 @endif
 
 <p class="text-muted small mb-3">
-    Showing contributions per member, broken down by month, with deficit and aging based on an expected 250 per month.
-    <strong>Monthly totals, deficit, and aging are automatically calculated from all contributions in the database.</strong>
+    Showing contributions per member for <strong>{{ $year }}</strong>, broken down by month, with deficit and aging based on an expected 250 per month.
+    <strong>Monthly totals, deficit, and aging are automatically calculated from all contributions for the selected year.</strong>
 </p>
 
 <div class="table-responsive">
@@ -59,7 +71,7 @@
                 <th rowspan="2">Member</th>
                 <th rowspan="2">Initials</th>
                 <th rowspan="2">Registration Fee</th>
-                <th colspan="12">Monthly Contributions ({{ $year }})</th>
+                <th colspan="12">Monthly Contributions</th>
                 <th rowspan="2">Deficit</th>
                 <th rowspan="2">Aging (months)</th>
             </tr>
