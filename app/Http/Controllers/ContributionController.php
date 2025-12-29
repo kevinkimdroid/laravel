@@ -301,6 +301,7 @@ class ContributionController extends Controller
 
     /**
      * Handle CSV import for historic contributions.
+     * Expected CSV format with columns: member_no, amount, contribution_date (YYYY-MM-DD)
      */
     public function import(Request $request)
     {
@@ -315,70 +316,171 @@ class ContributionController extends Controller
             return back()->withErrors(['file' => 'Unable to read uploaded file.']);
         }
 
-        // Assume header row: member_no, amount, contribution_date
+        // Read header row and map column indices
         $header = fgetcsv($handle, 0, ',');
+        if (!$header || count($header) < 3) {
+            fclose($handle);
+            return back()->withErrors(['file' => 'CSV file must have a header row with columns: member_no, amount, contribution_date (registration_fee is optional)']);
+        }
+
+        // Normalize header (trim and lowercase for case-insensitive matching)
+        $header = array_map(function($col) {
+            return strtolower(trim($col));
+        }, $header);
+
+        // Find column indices
+        $memberNoIndex = array_search('member_no', $header);
+        $amountIndex = array_search('amount', $header);
+        $dateIndex = array_search('contribution_date', $header);
+        $registrationFeeIndex = array_search('registration_fee', $header); // Optional column
+
+        // Validate required columns exist
+        if ($memberNoIndex === false || $amountIndex === false || $dateIndex === false) {
+            fclose($handle);
+            $missing = [];
+            if ($memberNoIndex === false) $missing[] = 'member_no';
+            if ($amountIndex === false) $missing[] = 'amount';
+            if ($dateIndex === false) $missing[] = 'contribution_date';
+            return back()->withErrors(['file' => 'CSV file is missing required columns: ' . implode(', ', $missing)]);
+        }
 
         $added = 0;
         $skipped = 0;
+        $errors = [];
+
+        // Get or create contributions account
+        $account = Account::firstOrCreate(
+            ['slug' => 'contributions'],
+            ['name' => 'Contributions Account', 'balance' => 0]
+        );
+
+        $lineNumber = 1; // Header is line 1
 
         while (($row = fgetcsv($handle, 0, ',')) !== false) {
-            if (count($row) < 3) {
-                $skipped++;
+            $lineNumber++;
+
+            // Skip empty rows
+            if (empty(array_filter($row))) {
                 continue;
             }
 
-            [$memberNo, $amount, $date] = $row;
+            // Validate row has enough columns
+            if (count($row) <= max($memberNoIndex, $amountIndex, $dateIndex)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Insufficient columns";
+                continue;
+            }
 
-            $member = Member::where('member_no', trim($memberNo))->first();
+            // Extract values by column index
+            $memberNo = trim($row[$memberNoIndex] ?? '');
+            $amount = trim($row[$amountIndex] ?? '');
+            $date = trim($row[$dateIndex] ?? '');
+
+            // Validate member_no
+            if (empty($memberNo)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Missing member_no";
+                continue;
+            }
+
+            $member = Member::where('member_no', $memberNo)->first();
             if (! $member) {
                 $skipped++;
+                $errors[] = "Line {$lineNumber}: Member with member_no '{$memberNo}' not found";
                 continue;
             }
 
-            $amount = is_numeric($amount) ? (float) $amount : 0;
+            // Handle registration_fee if present in CSV (optional column)
+            if ($registrationFeeIndex !== false && isset($row[$registrationFeeIndex])) {
+                $registrationFee = trim($row[$registrationFeeIndex]);
+                if (!empty($registrationFee) && is_numeric($registrationFee)) {
+                    $member->registration_fee = (float) $registrationFee;
+                    $member->save();
+                }
+            }
+
+            // Validate amount
+            if (empty($amount) || !is_numeric($amount)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Invalid amount '{$amount}'";
+                continue;
+            }
+
+            $amount = (float) $amount;
             if ($amount <= 0) {
                 $skipped++;
+                $errors[] = "Line {$lineNumber}: Amount must be greater than 0";
                 continue;
             }
 
-            // Basic date validation
+            // Validate date (expecting YYYY-MM-DD format)
+            if (empty($date)) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Missing contribution_date";
+                continue;
+            }
+
             try {
-                $contributionDate = \Carbon\Carbon::parse($date)->toDateString();
+                // Try to parse date - accept YYYY-MM-DD format
+                $contributionDate = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
+                if ($contributionDate->format('Y-m-d') !== $date) {
+                    throw new \Exception('Date format mismatch');
+                }
+                $contributionDate = $contributionDate->toDateString();
             } catch (\Exception $e) {
                 $skipped++;
+                $errors[] = "Line {$lineNumber}: Invalid date format '{$date}' (expected YYYY-MM-DD)";
                 continue;
             }
 
-            // Reuse store logic helpers: contributions account & transactions
-            $account = Account::firstOrCreate(
-                ['slug' => 'contributions'],
-                ['name' => 'Contributions Account', 'balance' => 0]
-            );
+            // Check if contribution already exists (optional: prevent duplicates)
+            $exists = Contribution::where('member_id', $member->id)
+                ->where('contribution_date', $contributionDate)
+                ->where('amount', $amount)
+                ->exists();
 
-            $ref = 'IMPORT-' . now()->format('YmdHis') . '-' . $member->id;
+            if ($exists) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Contribution already exists for member {$memberNo} on {$contributionDate}";
+                continue;
+            }
 
-            Contribution::create([
-                'member_id' => $member->id,
-                'amount' => $amount,
-                'contribution_date' => $contributionDate,
-                'transaction_ref' => $ref,
-            ]);
+            // Create contribution
+            $ref = 'IMPORT-' . now()->format('YmdHis') . '-' . $member->id . '-' . $lineNumber;
 
-            Transaction::create([
-                'account_id' => $account->id,
-                'income' => $amount,
-                'expense' => 0,
-                'transaction_date' => $contributionDate,
-            ]);
+            try {
+                Contribution::create([
+                    'member_id' => $member->id,
+                    'amount' => $amount,
+                    'contribution_date' => $contributionDate,
+                    'transaction_ref' => $ref,
+                ]);
 
-            $account->increment('balance', $amount);
-            $added++;
+                Transaction::create([
+                    'account_id' => $account->id,
+                    'income' => $amount,
+                    'expense' => 0,
+                    'transaction_date' => $contributionDate,
+                ]);
+
+                $account->increment('balance', $amount);
+                $added++;
+            } catch (\Exception $e) {
+                $skipped++;
+                $errors[] = "Line {$lineNumber}: Error saving contribution - " . $e->getMessage();
+            }
         }
 
         fclose($handle);
 
+        $result = [
+            'added' => $added,
+            'skipped' => $skipped,
+            'errors' => array_slice($errors, 0, 50) // Limit to first 50 errors
+        ];
+
         return redirect()->route('contributions.index')
-            ->with('import_result', ['added' => $added, 'skipped' => $skipped]);
+            ->with('import_result', $result);
     }
 }
 

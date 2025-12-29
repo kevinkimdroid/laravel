@@ -16,8 +16,39 @@
     </div>
 </div>
 
+@if (session('import_result'))
+    @php
+        $result = session('import_result');
+        $added = $result['added'] ?? 0;
+        $skipped = $result['skipped'] ?? 0;
+        $errors = $result['errors'] ?? [];
+    @endphp
+
+    <div class="alert {{ $added > 0 ? 'alert-success' : 'alert-warning' }} alert-dismissible fade show">
+        <strong>CSV Import Complete:</strong>
+        Successfully imported <strong>{{ $added }}</strong> contributions.
+        @if ($skipped > 0)
+            <strong>{{ $skipped }}</strong> rows were skipped (invalid data or missing members).
+        @endif
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    @if (!empty($errors))
+        <div class="alert alert-warning alert-dismissible fade show">
+            <strong>Import Errors (first {{ count($errors) }}):</strong>
+            <ul class="mb-0 small">
+                @foreach ($errors as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+@endif
+
 <p class="text-muted small mb-3">
     Showing contributions per member, broken down by month, with deficit and aging based on an expected 250 per month.
+    <strong>Monthly totals, deficit, and aging are automatically calculated from all contributions in the database.</strong>
 </p>
 
 <div class="table-responsive">
@@ -27,6 +58,7 @@
                 <th rowspan="2">#</th>
                 <th rowspan="2">Member</th>
                 <th rowspan="2">Initials</th>
+                <th rowspan="2">Registration Fee</th>
                 <th colspan="12">Monthly Contributions ({{ $year }})</th>
                 <th rowspan="2">Deficit</th>
                 <th rowspan="2">Aging (months)</th>
@@ -52,6 +84,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $row['member']->name }}</td>
                     <td class="text-center">{{ $row['initials'] }}</td>
+                    <td class="text-end">{{ number_format($row['member']->registration_fee ?? 1000, 2) }}</td>
                     <td class="text-end">{{ number_format($row['months']['jan'], 2) }}</td>
                     <td class="text-end">{{ number_format($row['months']['feb'], 2) }}</td>
                     <td class="text-end">{{ number_format($row['months']['mar'], 2) }}</td>
@@ -69,7 +102,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="17" class="text-center">
+                    <td colspan="18" class="text-center">
                         No members or contributions found for {{ $year }}.
                     </td>
                 </tr>

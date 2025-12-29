@@ -14,6 +14,7 @@ class Member extends Model
         'name',
         'initials',
         'registration_amount_paid',
+        'registration_fee',
         'paid_to_date',
         'phone',
         'status'

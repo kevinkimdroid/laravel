@@ -67,10 +67,16 @@ public function statement(Member $member)
             'name' => 'required|string|max:150',
             'initials' => 'required|string|max:50',
             'registration_amount_paid' => 'required|string|max:191',
+            'registration_fee' => 'nullable|numeric|min:0',
             'paid_to_date' => 'required|string|max:191',
             'phone' => 'nullable|string|max:50',
             'status' => 'nullable|string|in:ACTIVE,INACTIVE',
         ]);
+
+        // Set default registration_fee if not provided
+        if (!isset($validated['registration_fee']) || empty($validated['registration_fee'])) {
+            $validated['registration_fee'] = 1000;
+        }
 
         // Create the member
         Member::create(array_merge($validated, [
@@ -100,10 +106,16 @@ public function statement(Member $member)
             'name' => 'required|string|max:150',
             'initials' => 'required|string|max:50',
             'registration_amount_paid' => 'required|string|max:191',
+            'registration_fee' => 'nullable|numeric|min:0',
             'paid_to_date' => 'required|string|max:191',
             'phone' => 'nullable|string|max:50',
             'status' => 'nullable|string|in:ACTIVE,INACTIVE',
         ]);
+
+        // Set default registration_fee if not provided
+        if (!isset($validated['registration_fee']) || empty($validated['registration_fee'])) {
+            $validated['registration_fee'] = $member->registration_fee ?? 1000;
+        }
 
         $member->update($validated);
 

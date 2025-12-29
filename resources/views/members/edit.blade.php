@@ -56,6 +56,16 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Registration Fee</label>
+        <input type="number"
+               step="0.01"
+               name="registration_fee"
+               class="form-control"
+               value="{{ old('registration_fee', $member->registration_fee ?? 1000) }}"
+               required>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Paid To Date</label>
         <input type="text"
                name="paid_to_date"

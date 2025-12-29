@@ -36,6 +36,10 @@
     </div>
 
     <div class="mb-2">
+        <input type="number" step="0.01" class="form-control" name="registration_fee" placeholder="Registration Fee" value="{{ old('registration_fee', 1000) }}" required>
+    </div>
+
+    <div class="mb-2">
         <input class="form-control" name="paid_to_date" placeholder="Paid To Date" value="{{ old('paid_to_date') }}" required>
     </div>
 
