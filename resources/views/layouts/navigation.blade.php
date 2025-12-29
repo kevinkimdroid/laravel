@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            {{ config('app.name', 'Laravel') }}
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
+            <img src="{{ asset('logo.png') }}" alt="QBASH" height="40" class="me-2" onerror="this.style.display='none';">
+            <span>{{ config('app.name', 'QBASH') }}</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"

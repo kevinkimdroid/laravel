@@ -9,7 +9,7 @@
                         background-position: center;">
                 <div class="h-100 w-100 d-flex flex-column justify-content-end p-3"
                      style="background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.7));">
-                    <h5 class="text-white mb-1">{{ config('app.name', 'Laravel') }}</h5>
+                    <h5 class="text-white mb-1">{{ config('app.name', 'QBASH') }}</h5>
                     <p class="text-white-50 small mb-0">Secure member and contribution management portal.</p>
                 </div>
             </div>
