@@ -27,4 +27,12 @@ class Member extends Model
     {
         return $this->hasMany(Contribution::class, 'member_id', 'id');
     }
+
+    /**
+     * Relationship: Member has many Users
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class, 'member_id', 'id');
+    }
 }

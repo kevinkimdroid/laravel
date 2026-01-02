@@ -216,7 +216,7 @@ class ContributionController extends Controller
         $user = $request->user();
 
         if (! $user || ! $user->member_id) {
-            abort(403, 'No member profile linked to this user.');
+            return redirect()->route('members.pending-approval');
         }
 
         $member = Member::findOrFail($user->member_id);
@@ -238,7 +238,7 @@ class ContributionController extends Controller
         $user = $request->user();
 
         if (! $user || ! $user->member_id) {
-            abort(403, 'No member profile linked to this user.');
+            return redirect()->route('members.pending-approval');
         }
 
         $member = Member::findOrFail($user->member_id);
@@ -255,7 +255,7 @@ class ContributionController extends Controller
         $user = $request->user();
 
         if (! $user || ! $user->member_id) {
-            abort(403, 'No member profile linked to this user.');
+            return redirect()->route('members.pending-approval');
         }
 
         $validated = $request->validate([

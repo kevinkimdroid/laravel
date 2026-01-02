@@ -99,12 +99,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
             ->name('admin.dashboard');
 
+        // Approve user and link to member
+        Route::post('/admin/users/{user}/approve', [AdminController::class, 'approveUser'])
+            ->name('admin.approve-user');
+
         // Admin manages members
         Route::resource('members', MemberController::class);
 
         // Member contribution statement
         Route::get('members/{member}/statement', [MemberController::class, 'statement'])
             ->name('members.statement');
+
+        // Import members from Excel
+        Route::get('members-import', [MemberController::class, 'showImportForm'])
+            ->name('members.import.form');
+        Route::post('members-import', [MemberController::class, 'import'])
+            ->name('members.import');
+        Route::get('members-template', [MemberController::class, 'downloadTemplate'])
+            ->name('members.template');
 
         // Admin manages contributions
         Route::resource('contributions', ContributionController::class);
@@ -147,5 +159,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/member/contributions/pay', [ContributionController::class, 'pay'])
             ->name('member.contributions.pay');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pending Approval Route (for users without member profile)
+    |--------------------------------------------------------------------------
+    | This route is accessible to all authenticated users
+    */
+    Route::get('/members/pending-approval', function () {
+        return view('members.pending-approval');
+    })->name('members.pending-approval');
 
 });
