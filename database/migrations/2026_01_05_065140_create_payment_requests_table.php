@@ -17,12 +17,24 @@ return new class extends Migration
             $table->string('type'); // 'registration_fee' or 'monthly_contribution'
             $table->decimal('amount', 12, 2);
             $table->date('payment_date');
-            $table->string('mpesa_code', 10);
+            $table->string('mpesa_code', 10)->nullable(); // Nullable for STK Push payments
             $table->text('mpesa_message')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'processing'])->default('pending');
             $table->text('admin_notes')->nullable();
             $table->foreignId('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
+            
+            // Daraja API fields
+            $table->string('checkout_request_id')->nullable()->unique();
+            $table->string('merchant_request_id')->nullable();
+            $table->string('result_code')->nullable();
+            $table->text('result_desc')->nullable();
+            $table->string('mpesa_receipt_number')->nullable();
+            $table->timestamp('transaction_date')->nullable();
+            $table->decimal('amount_paid', 12, 2)->nullable();
+            $table->string('phone_number')->nullable();
+            $table->text('callback_data')->nullable(); // Store full callback JSON
+            
             $table->timestamps();
         });
     }

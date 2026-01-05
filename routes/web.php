@@ -191,9 +191,8 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:member')->group(function () {
 
-        Route::get('/member/dashboard', function () {
-            return redirect()->route('member.contributions');
-        })->name('member.dashboard');
+        Route::get('/member/dashboard', [MemberController::class, 'myDashboard'])
+            ->name('member.dashboard');
 
         // Member views own contributions
         Route::get('/member/contributions', [ContributionController::class, 'myContributions'])
@@ -208,6 +207,10 @@ Route::middleware('auth')->group(function () {
         // Member views calendar (read-only)
         Route::get('/member/calendar', [\App\Http\Controllers\CalendarActivityController::class, 'index'])
             ->name('member.calendar');
+
+        // Member views QPL standings (read-only)
+        Route::get('/member/qpl/standings', [\App\Http\Controllers\QplGameController::class, 'standings'])
+            ->name('member.qpl.standings');
     });
 
     /*
@@ -220,4 +223,22 @@ Route::middleware('auth')->group(function () {
         return view('members.pending-approval');
     })->name('members.pending-approval');
 
+});
+
+/*
+|--------------------------------------------------------------------------
+| M-Pesa Daraja API Callback Routes (Public - No Auth Required)
+|--------------------------------------------------------------------------
+*/
+Route::post('/api/mpesa/callback', [\App\Http\Controllers\MpesaCallbackController::class, 'stkCallback'])
+    ->name('mpesa.callback');
+
+/*
+|--------------------------------------------------------------------------
+| Daraja API Test Route (Admin Only)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/daraja/test', [\App\Http\Controllers\DarajaTestController::class, 'test'])
+        ->name('daraja.test');
 });

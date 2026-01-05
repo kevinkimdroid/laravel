@@ -3,46 +3,29 @@
     <div class="d-flex align-items-center">
         <i class="bi bi-hourglass-split me-3" style="font-size: 2rem;"></i>
         <div class="flex-grow-1">
-            <h5 class="alert-heading mb-1">Pending Payment Requests</h5>
-            <p class="mb-0">You have <strong>{{ $pendingPayments->count() }}</strong> payment request(s) awaiting admin approval.</p>
+            <h5 class="alert-heading mb-1">Payment Requests Status</h5>
+            <p class="mb-0">
+                You have <strong>{{ $pendingPayments->where('status', 'pending')->count() }}</strong> pending, 
+                <strong>{{ $pendingPayments->where('status', 'processing')->count() }}</strong> processing payment request(s).
+            </p>
         </div>
     </div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 @endif
 
-<!-- M-Pesa Payment Instructions -->
+<!-- Quick Payment -->
 <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #25D366 !important;">
     <div class="card-header bg-success bg-opacity-10">
         <h5 class="mb-0 fw-bold">
-            <i class="bi bi-phone me-2" style="color: #25D366;"></i>M-Pesa Payment Instructions
+            <i class="bi bi-phone me-2" style="color: #25D366;"></i>Make Payment via M-Pesa
         </h5>
     </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <h6 class="fw-semibold mb-3">Steps to Pay:</h6>
-                <ol class="mb-0">
-                    <li class="mb-2">Go to <strong>M-Pesa</strong> on your phone</li>
-                    <li class="mb-2">Select <strong>Lipa na M-Pesa</strong></li>
-                    <li class="mb-2">Select <strong>Buy Goods and Services</strong></li>
-                    <li class="mb-2">Enter Till Number: <strong class="text-primary fs-4">123456</strong></li>
-                    <li class="mb-2">Enter the amount you want to pay</li>
-                    <li class="mb-2">Enter your M-Pesa PIN</li>
-                    <li class="mb-2">Confirm the payment</li>
-                </ol>
-            </div>
-            <div class="col-md-6">
-                <div class="alert alert-info">
-                    <h6 class="fw-semibold mb-2">
-                        <i class="bi bi-info-circle me-2"></i>Important Information
-                    </h6>
-                    <p class="mb-2"><strong>Till Number:</strong> <span class="badge bg-primary fs-6">123456</span></p>
-                    <p class="mb-2"><strong>Account Name:</strong> Eldoret Club</p>
-                    <p class="mb-0"><strong>Note:</strong> After payment, submit the M-Pesa confirmation message details below.</p>
-                </div>
-            </div>
-        </div>
+        <p class="mb-3">Click the button below to initiate an M-Pesa payment. You will receive a prompt on your phone to enter your M-Pesa PIN.</p>
+        <a href="{{ route('member.contributions.pay.form') }}" class="btn btn-success btn-lg">
+            <i class="bi bi-phone me-2"></i>Pay Now
+        </a>
     </div>
 </div>
 

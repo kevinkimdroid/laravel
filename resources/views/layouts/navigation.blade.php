@@ -56,6 +56,11 @@
                                 <i class="bi bi-calendar-event me-1"></i>Calendar
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.qpl.*') || request()->routeIs('qpl-games.standings') ? 'active' : '' }}" href="{{ route('member.qpl.standings') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-trophy me-1"></i>QPL Standings
+                            </a>
+                        </li>
                     @else
                         {{-- Generic Navigation --}}
                         <li class="nav-item">

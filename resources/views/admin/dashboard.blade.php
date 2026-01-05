@@ -187,6 +187,34 @@
 @endif
 
 <!-- Quick Actions -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-info bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold text-info">
+            <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <a href="{{ route('daraja.test') }}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-gear me-2"></i>Test M-Pesa API
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ route('calendar-activities.index') }}" class="btn btn-outline-success w-100">
+                    <i class="bi bi-calendar-event me-2"></i>Manage Calendar
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ route('qpl-games.index') }}" class="btn btn-outline-warning w-100">
+                    <i class="bi bi-trophy me-2"></i>QPL Games
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions (Old Section - Keep for backward compatibility) -->
 <div class="row g-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #667eea !important;">

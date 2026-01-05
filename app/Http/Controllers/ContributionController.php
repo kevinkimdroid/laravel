@@ -15,8 +15,20 @@ class ContributionController extends Controller
      */
     public function index(Request $request)
     {
-        $year = $request->get('year', now()->year);
-        $year = (int) $year; // Ensure it's an integer
+        // Get year from request, default to current year if not provided
+        $year = $request->get('year');
+        if ($year) {
+            $year = (int) $year;
+        } else {
+            // Default to current year
+            $year = now()->year;
+        }
+        
+        // Ensure year is valid (between 2024 and current year + 1)
+        $currentYear = now()->year;
+        if ($year < 2024 || $year > $currentYear + 1) {
+            $year = $currentYear; // Default to current year if invalid
+        }
 
         // Aggregate monthly contributions per member per month for the selected year (exclude registration fees)
         $aggregated = Contribution::selectRaw('member_id, YEAR(contribution_date) as year, MONTH(contribution_date) as month, SUM(amount) as total')
@@ -25,7 +37,18 @@ class ContributionController extends Controller
             ->groupBy('member_id', 'year', 'month')
             ->get();
 
-        $members = Member::orderBy('name')->get();
+        // Search functionality for members
+        $membersQuery = Member::query();
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $membersQuery->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('member_no', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('initials', 'like', "%{$search}%");
+            });
+        }
+        $members = $membersQuery->orderBy('name')->get();
 
         $rows = [];
         // For 2024, only show months from July onwards (club started in July)
@@ -55,50 +78,61 @@ class ContributionController extends Controller
 
             $totalPaid = array_sum($months);
 
-            // Calculate actual outstanding balance: previous + current month (not year-based)
+            // Calculate outstanding balance - CUMULATIVE from join date to end of selected year
+            // This brings forward previous years' outstanding balances
             $joinDate = $member->getJoinDate(); // First contribution = joining date
+            $selectedYear = (int) $year;
+            $currentYear = now()->year;
             
-            // Previous outstanding (from join date to end of last month)
-            $endOfLastMonth = \Carbon\Carbon::now()->subMonth()->endOfMonth();
-            if ($endOfLastMonth < $joinDate) {
-                $endOfLastMonth = $joinDate->copy()->subDay();
+            // Determine the "as of" date based on selected year
+            if ($selectedYear < $currentYear) {
+                // Past year: calculate as of end of that year (Dec 31)
+                $asOfDate = \Carbon\Carbon::create($selectedYear, 12, 31)->endOfDay();
+            } elseif ($selectedYear == $currentYear) {
+                // Current year: calculate as of end of current month
+                $asOfDate = \Carbon\Carbon::now()->endOfMonth();
+            } else {
+                // Future year: calculate as of end of that year (for planning purposes)
+                $asOfDate = \Carbon\Carbon::create($selectedYear, 12, 31)->endOfDay();
             }
             
-            $previousExpected = 0;
-            $currentDate = clone $joinDate;
-            while ($currentDate <= $endOfLastMonth) {
-                $year = $currentDate->year;
-                $expectedMonthly = ($year >= 2026) ? 300 : 250;
-                $previousExpected += $expectedMonthly;
-                $currentDate->addMonth();
+            // If member joined after the "as of" date, they have no outstanding
+            if ($joinDate > $asOfDate) {
+                $deficit = 0;
+            } else {
+                // Calculate CUMULATIVE outstanding from join date to "as of" date
+                // This includes all previous years' outstanding brought forward
+                $expectedTotal = 0;
+                $currentDate = clone $joinDate;
+                
+                // Start from join date and calculate all expected contributions up to "as of" date
+                while ($currentDate <= $asOfDate) {
+                    $calcYear = $currentDate->year;
+                    $calcMonth = $currentDate->month;
+                    
+                    // For 2024, skip Jan-June (club started in July)
+                    if ($calcYear == 2024 && $calcMonth < 7) {
+                        // Move to July 2024
+                        $currentDate = \Carbon\Carbon::create(2024, 7, 1)->startOfMonth();
+                        continue;
+                    }
+                    
+                    // Determine expected monthly amount based on year
+                    $expectedMonthly = ($calcYear >= 2026) ? 300 : 250;
+                    $expectedTotal += $expectedMonthly;
+                    $currentDate->addMonth();
+                }
+                
+                // Get total paid from join date to "as of" date (all contributions, cumulative)
+                $totalPaidForOutstanding = $member->contributions()
+                    ->where('type', 'monthly_contribution')
+                    ->where('contribution_date', '>=', $joinDate)
+                    ->where('contribution_date', '<=', $asOfDate)
+                    ->sum('amount');
+                
+                // Outstanding = cumulative expected - cumulative paid (brings forward previous years)
+                $deficit = max(0, $expectedTotal - $totalPaidForOutstanding);
             }
-            
-            $previousPaid = $member->contributions()
-                ->where('type', 'monthly_contribution')
-                ->where('contribution_date', '>=', $joinDate)
-                ->where('contribution_date', '<=', $endOfLastMonth)
-                ->sum('amount');
-            
-            $previousOutstanding = max(0, $previousExpected - $previousPaid);
-            
-            // Current month's outstanding (only current month)
-            $currentMonth = \Carbon\Carbon::now()->startOfMonth();
-            $currentMonthExpected = 0;
-            if ($currentMonth >= $joinDate) {
-                $year = $currentMonth->year;
-                $currentMonthExpected = ($year >= 2026) ? 300 : 250;
-            }
-            
-            $currentMonthPaid = $member->contributions()
-                ->where('type', 'monthly_contribution')
-                ->where('contribution_date', '>=', $currentMonth)
-                ->where('contribution_date', '<=', \Carbon\Carbon::now()->endOfMonth())
-                ->sum('amount');
-            
-            $currentMonthOutstanding = max(0, $currentMonthExpected - $currentMonthPaid);
-            
-            // Total outstanding = previous + current month (this is what we display)
-            $deficit = $previousOutstanding + $currentMonthOutstanding;
             
             // Calculate expected total for the selected year (for display purposes)
             $expectedTotal = $expectedPerMonth * count($monthlyKeys);
@@ -123,9 +157,10 @@ class ContributionController extends Controller
                 'member'   => $member,
                 'initials' => $initials ?: '-',
                 'months'   => $months,
-                'deficit'  => $deficit,
+                'outstanding'  => $deficit, // Use 'outstanding' for consistency with view
                 'aging'    => $aging,
                 'registration_fee' => $registrationFee,
+                'join_date' => $joinDate, // Pass join date to view
             ];
         }
 
@@ -332,8 +367,7 @@ class ContributionController extends Controller
     }
 
     /**
-     * Member: record own contribution payment.
-     * (Simulated online payment – records as contribution + transaction.)
+     * Member: initiate M-Pesa STK Push payment.
      */
     public function pay(Request $request)
     {
@@ -343,44 +377,53 @@ class ContributionController extends Controller
             return redirect()->route('members.pending-approval');
         }
 
+        $member = Member::findOrFail($user->member_id);
+
         $validated = $request->validate([
             'type' => 'required|in:registration_fee,monthly_contribution',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:1',
             'contribution_date' => ['required', 'date', 'after_or_equal:2024-07-01', 'before_or_equal:today'],
-            'mpesa_code' => 'required|string|size:10|regex:/^[A-Z0-9]{10}$/',
-            'mpesa_message' => 'nullable|string|max:500',
+            'phone_number' => 'required|string|min:10|max:15',
         ]);
 
         $type = $validated['type'];
         $amount = $validated['amount'];
-        
-        // Normalize M-Pesa code to uppercase
-        $mpesaCode = strtoupper(preg_replace('/[^A-Z0-9]/', '', $validated['mpesa_code']));
+        $phoneNumber = $validated['phone_number'];
+        $paymentDate = $validated['contribution_date'];
 
-        // Check if M-Pesa code already exists
-        $existingRequest = \App\Models\PaymentRequest::where('mpesa_code', $mpesaCode)
-            ->where('status', '!=', 'rejected')
-            ->first();
+        // Generate account reference
+        $accountReference = 'QBASH-' . $member->member_no . '-' . strtoupper(substr($type, 0, 3));
+        $transactionDesc = ucfirst(str_replace('_', ' ', $type)) . ' - ' . $member->name;
 
-        if ($existingRequest) {
+        // Initiate STK Push
+        $darajaService = new \App\Services\DarajaService();
+        $stkResponse = $darajaService->initiateSTKPush(
+            $phoneNumber,
+            $amount,
+            $accountReference,
+            $transactionDesc
+        );
+
+        if (!$stkResponse['success']) {
             return back()
                 ->withInput()
-                ->withErrors(['mpesa_code' => 'This M-Pesa transaction code has already been submitted.']);
+                ->withErrors(['phone_number' => $stkResponse['message'] ?? 'Failed to initiate payment. Please try again.']);
         }
 
-        // Create payment request (pending approval)
-        \App\Models\PaymentRequest::create([
+        // Create payment request with STK Push details
+        $paymentRequest = \App\Models\PaymentRequest::create([
             'member_id' => $user->member_id,
             'type' => $type,
             'amount' => $amount,
-            'payment_date' => $validated['contribution_date'],
-            'mpesa_code' => $mpesaCode,
-            'mpesa_message' => $validated['mpesa_message'] ?? null,
-            'status' => 'pending',
+            'payment_date' => $paymentDate,
+            'phone_number' => $phoneNumber,
+            'checkout_request_id' => $stkResponse['checkout_request_id'],
+            'merchant_request_id' => $stkResponse['merchant_request_id'],
+            'status' => 'processing',
         ]);
 
         return redirect()->route('member.contributions')
-            ->with('success', 'Payment details submitted successfully! Your payment will be verified and recorded by the admin. You will be notified once it\'s confirmed.');
+            ->with('success', $stkResponse['customer_message'] ?? 'Payment request sent to your phone. Please enter your M-Pesa PIN to complete the payment.');
     }
 
     /**

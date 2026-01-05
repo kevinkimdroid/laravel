@@ -136,3 +136,68 @@
     </div>
 </div>
 
+@if(isset($outstandingMonths) && count($outstandingMonths) > 0)
+<!-- Outstanding Months Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #dc3545 !important;">
+    <div class="card-header bg-danger bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold text-danger">
+            <i class="bi bi-calendar-x me-2"></i>Outstanding Months ({{ count($outstandingMonths) }})
+        </h5>
+        <p class="mb-0 mt-2 text-muted small">Months with unpaid or partially paid contributions</p>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            @foreach($outstandingMonths as $month)
+                <div class="col-md-4 col-lg-3">
+                    <div class="card border-danger h-100">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="fw-bold text-danger mb-0">
+                                    <i class="bi bi-calendar3 me-1"></i>{{ $month['short_month'] }}
+                                </h6>
+                                <span class="badge bg-danger">{{ $month['outstanding'] > 0 ? 'Unpaid' : 'Partial' }}</span>
+                            </div>
+                            <div class="small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted">Expected:</span>
+                                    <span class="fw-semibold">KES {{ number_format($month['expected'], 0) }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted">Paid:</span>
+                                    <span class="fw-semibold text-success">KES {{ number_format($month['paid'], 0) }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between pt-2 border-top">
+                                    <span class="text-muted">Outstanding:</span>
+                                    <span class="fw-bold text-danger">KES {{ number_format($month['outstanding'], 0) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <div class="mt-3">
+            <a href="{{ route('members.statement', $member) }}" class="btn btn-outline-danger">
+                <i class="bi bi-file-earmark-text me-1"></i>View Full Statement
+            </a>
+        </div>
+    </div>
+</div>
+@elseif(isset($outstandingMonths))
+<!-- All Paid Up -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #28a745 !important;">
+    <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold text-success">
+            <i class="bi bi-check-circle me-2"></i>All Months Paid
+        </h5>
+        <p class="mb-0 mt-2 text-muted small">This member is up to date with all monthly contributions</p>
+    </div>
+    <div class="card-body">
+        <div class="text-center py-3">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+            <p class="mt-3 mb-0 fw-semibold text-success">No outstanding months</p>
+        </div>
+    </div>
+</div>
+@endif
+

@@ -27,6 +27,13 @@
     }
     .contributions-table tbody tr:hover {
         background-color: #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+    .contributions-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    .contributions-table tbody td.month-cell {
+        position: relative;
     }
     .contributions-table .col-sn {
         width: 40px;
@@ -68,15 +75,21 @@
                 <h3 class="mb-1 fw-bold text-primary">
                     <i class="bi bi-cash-stack me-2"></i>Contributions Overview
                 </h3>
-                <form method="GET" action="{{ route('contributions.index') }}" class="d-inline-flex align-items-center mt-2">
-                    <label for="year" class="form-label me-2 mb-0 fw-semibold">Year:</label>
-                    <select name="year" id="year" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
-                        @for($y = now()->year; $y >= now()->year - 10; $y--)
-                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
+                <form method="GET" action="{{ route('contributions.index') }}" id="yearForm" class="d-inline-flex align-items-center mt-2">
+                    <label for="year" class="form-label me-2 mb-0 fw-semibold" style="color: #0a4d68;">Year:</label>
+                    <select name="year" id="year" class="form-select form-select-md shadow-sm" style="width: 130px; font-weight: 600; border: 2px solid #088395;" onchange="document.getElementById('yearForm').submit();">
+                        @for($y = now()->year; $y >= 2024; $y--)
+                            <option value="{{ $y }}" {{ (int)$year === (int)$y ? 'selected' : '' }}>
                                 {{ $y }}
                             </option>
                         @endfor
                     </select>
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    <button type="submit" class="btn btn-primary btn-sm ms-2 shadow-sm" id="yearSubmitBtn" style="background: linear-gradient(135deg, #0a4d68 0%, #088395 50%, #05bfdb 100%); border: none;">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Load
+                    </button>
                 </form>
             </div>
             <div class="mt-3 mt-md-0">
@@ -88,6 +101,51 @@
                 </a>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('contributions.index') }}" class="row g-3 align-items-end">
+            <input type="hidden" name="year" value="{{ $year }}">
+            <div class="col-md-8">
+                <label for="search" class="form-label fw-semibold">
+                    <i class="bi bi-search me-2"></i>Search Members
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           value="{{ request('search') }}" 
+                           placeholder="Search by name, member number, phone, or initials...">
+                    @if(request('search'))
+                        <a href="{{ route('contributions.index', ['year' => $year]) }}" class="btn btn-outline-secondary" title="Clear search">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    @endif
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+            </div>
+        </form>
+        @if(request('search'))
+            <div class="mt-2">
+                <small class="text-muted">
+                    Showing results for: <strong>"{{ request('search') }}"</strong>
+                    <a href="{{ route('contributions.index', ['year' => $year]) }}" class="text-decoration-none ms-2">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </small>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -121,14 +179,25 @@
     @endif
 @endif
 
-<div class="alert alert-info shadow-sm mb-4">
-    <i class="bi bi-info-circle me-2"></i>
-    @if($year == 2024)
-        Showing contributions per member for <strong>{{ $year }}</strong>. The club officially started in July 2024, so only months from July onwards are shown. Expected contributions: <strong>{{ number_format($expectedPerMonth, 0) }}/month</strong> for {{ count($monthlyKeys) }} months.
-    @else
-        Showing contributions per member for <strong>{{ $year }}</strong>, broken down by month, with deficit and aging based on an expected <strong>{{ number_format($expectedPerMonth, 0) }}/month</strong>.
-    @endif
-    <strong>Monthly totals, deficit, and aging are automatically calculated from all contributions for the selected year.</strong>
+<div class="alert alert-info shadow-sm mb-4 border-start border-4 border-info">
+    <div class="d-flex align-items-start">
+        <i class="bi bi-info-circle me-3" style="font-size: 1.5rem; color: #0a4d68;"></i>
+        <div>
+            <h6 class="alert-heading fw-bold mb-2" style="color: #0a4d68;">
+                <i class="bi bi-calendar-year me-1"></i>Contributions for {{ $year }}
+            </h6>
+            @if($year == 2024)
+                <p class="mb-1">The club officially started in <strong>July 2024</strong>, so only months from July onwards are shown.</p>
+                <p class="mb-0">Expected contributions: <strong class="text-primary">{{ number_format($expectedPerMonth, 0) }} KES/month</strong> for {{ count($monthlyKeys) }} months.</p>
+            @else
+                <p class="mb-1">Showing all 12 months for <strong>{{ $year }}</strong>.</p>
+                <p class="mb-0">Expected contributions: <strong class="text-primary">{{ number_format($expectedPerMonth, 0) }} KES/month</strong>.</p>
+            @endif
+            <p class="mb-0 mt-2 small">
+                <i class="bi bi-lightbulb me-1"></i><strong>Note:</strong> The table shows contributions paid in <strong>{{ $year }}</strong>. Outstanding balances are <strong>cumulative</strong> - they include all previous years' outstanding brought forward to the end of <strong>{{ $year }}</strong>{{ $year == now()->year ? ' (current month)' : '' }}, calculated from each member's join date.
+            </p>
+        </div>
+    </div>
 </div>
 
 <div class="card border-0 shadow-sm">
@@ -182,11 +251,11 @@
         </thead>
         <tbody>
             @forelse($rows as $row)
-                <tr>
+                <tr class="align-middle">
                     <td class="fw-semibold text-center">{{ $loop->iteration }}</td>
                     <td class="fw-semibold text-center">{{ $row['member']->member_no }}</td>
                     <td class="fw-semibold" style="text-align: left !important;">{{ $row['member']->name }}</td>
-                    <td class="fw-semibold text-center" style="font-size: 1rem; letter-spacing: 1px;">{{ $row['initials'] }}</td>
+                    <td class="fw-semibold text-center" style="font-size: 1rem; letter-spacing: 1px; font-weight: 700;">{{ $row['initials'] }}</td>
                     <td>
                         @if(isset($row['registration_fee']) && $row['registration_fee'] > 0)
                             <span class="badge bg-warning text-dark fw-semibold">{{ number_format($row['registration_fee'], 2) }}</span>
@@ -194,34 +263,77 @@
                             <span class="text-muted">-</span>
                         @endif
                     </td>
+                    @php
+                        $joinDate = $row['join_date'];
+                        $joinYear = $joinDate->year;
+                        $joinMonth = $joinDate->month;
+                    @endphp
                     @if($year == 2024)
                         {{-- For 2024, only show July-December --}}
-                        <td class="month-cell">{{ ($row['months']['jul'] ?? 0) > 0 ? number_format($row['months']['jul'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['aug'] ?? 0) > 0 ? number_format($row['months']['aug'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['sep'] ?? 0) > 0 ? number_format($row['months']['sep'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['oct'] ?? 0) > 0 ? number_format($row['months']['oct'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['nov'] ?? 0) > 0 ? number_format($row['months']['nov'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['dec'] ?? 0) > 0 ? number_format($row['months']['dec'], 2) : '-' }}</td>
+                        @php
+                            $monthData = [
+                                'jul' => ['num' => 7, 'name' => 'Jul'],
+                                'aug' => ['num' => 8, 'name' => 'Aug'],
+                                'sep' => ['num' => 9, 'name' => 'Sep'],
+                                'oct' => ['num' => 10, 'name' => 'Oct'],
+                                'nov' => ['num' => 11, 'name' => 'Nov'],
+                                'dec' => ['num' => 12, 'name' => 'Dec'],
+                            ];
+                        @endphp
+                        @foreach(['jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as $monthKey)
+                            @php
+                                $monthNum = $monthData[$monthKey]['num'];
+                                $isBeforeJoin = ($year < $joinYear) || ($year == $joinYear && $monthNum < $joinMonth);
+                            @endphp
+                            <td class="month-cell" style="@if($isBeforeJoin) background-color: #f8f9fa; opacity: 0.6; @endif">
+                                @if($isBeforeJoin)
+                                    <span class="badge bg-light text-muted border" style="font-size: 0.7rem; padding: 3px 6px; font-weight: 500;" title="Not a member until {{ $joinDate->format('M Y') }}">
+                                        <i class="bi bi-person-x me-1"></i>N/A
+                                    </span>
+                                @else
+                                    {{ ($row['months'][$monthKey] ?? 0) > 0 ? number_format($row['months'][$monthKey], 2) : '-' }}
+                                @endif
+                            </td>
+                        @endforeach
                     @else
                         {{-- For other years, show all 12 months --}}
-                        <td class="month-cell">{{ ($row['months']['jan'] ?? 0) > 0 ? number_format($row['months']['jan'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['feb'] ?? 0) > 0 ? number_format($row['months']['feb'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['mar'] ?? 0) > 0 ? number_format($row['months']['mar'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['apr'] ?? 0) > 0 ? number_format($row['months']['apr'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['may'] ?? 0) > 0 ? number_format($row['months']['may'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['jun'] ?? 0) > 0 ? number_format($row['months']['jun'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['jul'] ?? 0) > 0 ? number_format($row['months']['jul'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['aug'] ?? 0) > 0 ? number_format($row['months']['aug'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['sep'] ?? 0) > 0 ? number_format($row['months']['sep'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['oct'] ?? 0) > 0 ? number_format($row['months']['oct'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['nov'] ?? 0) > 0 ? number_format($row['months']['nov'], 2) : '-' }}</td>
-                        <td class="month-cell">{{ ($row['months']['dec'] ?? 0) > 0 ? number_format($row['months']['dec'], 2) : '-' }}</td>
+                        @php
+                            $monthData = [
+                                'jan' => ['num' => 1, 'name' => 'Jan'],
+                                'feb' => ['num' => 2, 'name' => 'Feb'],
+                                'mar' => ['num' => 3, 'name' => 'Mar'],
+                                'apr' => ['num' => 4, 'name' => 'Apr'],
+                                'may' => ['num' => 5, 'name' => 'May'],
+                                'jun' => ['num' => 6, 'name' => 'Jun'],
+                                'jul' => ['num' => 7, 'name' => 'Jul'],
+                                'aug' => ['num' => 8, 'name' => 'Aug'],
+                                'sep' => ['num' => 9, 'name' => 'Sep'],
+                                'oct' => ['num' => 10, 'name' => 'Oct'],
+                                'nov' => ['num' => 11, 'name' => 'Nov'],
+                                'dec' => ['num' => 12, 'name' => 'Dec'],
+                            ];
+                        @endphp
+                        @foreach(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as $monthKey)
+                            @php
+                                $monthNum = $monthData[$monthKey]['num'];
+                                $isBeforeJoin = ($year < $joinYear) || ($year == $joinYear && $monthNum < $joinMonth);
+                            @endphp
+                            <td class="month-cell" style="@if($isBeforeJoin) background-color: #f8f9fa; opacity: 0.6; @endif">
+                                @if($isBeforeJoin)
+                                    <span class="badge bg-light text-muted border" style="font-size: 0.7rem; padding: 3px 6px; font-weight: 500;" title="Not a member until {{ $joinDate->format('M Y') }}">
+                                        <i class="bi bi-person-x me-1"></i>N/A
+                                    </span>
+                                @else
+                                    {{ ($row['months'][$monthKey] ?? 0) > 0 ? number_format($row['months'][$monthKey], 2) : '-' }}
+                                @endif
+                            </td>
+                        @endforeach
                     @endif
                     <td>
-                        @if($row['deficit'] > 0)
-                            <span class="badge bg-danger fw-semibold">{{ number_format($row['deficit'], 2) }}</span>
+                        @if($row['outstanding'] > 0)
+                            <span class="badge bg-danger fw-semibold">{{ number_format($row['outstanding'], 2) }}</span>
                         @else
-                            <span class="badge bg-success fw-semibold">{{ number_format($row['deficit'], 2) }}</span>
+                            <span class="badge bg-success fw-semibold">{{ number_format($row['outstanding'], 2) }}</span>
                         @endif
                     </td>
                     <td>
@@ -236,9 +348,13 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="19" class="text-center py-5">
+                    <td colspan="{{ 6 + count($monthlyKeys) }}" class="text-center py-5">
                         <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
+                        <h5 class="text-muted mb-2">No Data Available</h5>
                         <p class="text-muted">No members or contributions found for {{ $year }}.</p>
+                        <a href="{{ route('contributions.create') }}" class="btn btn-primary mt-3">
+                            <i class="bi bi-plus-circle me-1"></i>Add First Contribution
+                        </a>
                     </td>
                 </tr>
             @endforelse
@@ -247,4 +363,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Smooth year selection with loading indicator
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearSelect = document.getElementById('year');
+        const yearForm = document.getElementById('yearForm');
+        const submitBtn = document.getElementById('yearSubmitBtn');
+        
+        if (yearSelect && yearForm && submitBtn) {
+            // Show loading when form is submitted
+            yearForm.addEventListener('submit', function(e) {
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Loading...';
+                submitBtn.disabled = true;
+                yearSelect.disabled = true;
+            });
+        }
+    });
+</script>
 @endsection

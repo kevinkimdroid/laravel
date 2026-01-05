@@ -27,6 +27,50 @@
     </div>
 </div>
 
+<!-- Search Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('members.index') }}" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="search" class="form-label fw-semibold">
+                    <i class="bi bi-search me-2"></i>Search Members
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           value="{{ request('search') }}" 
+                           placeholder="Search by name, member number, phone, or initials...">
+                    @if(request('search'))
+                        <a href="{{ route('members.index') }}" class="btn btn-outline-secondary" title="Clear search">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    @endif
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+            </div>
+        </form>
+        @if(request('search'))
+            <div class="mt-2">
+                <small class="text-muted">
+                    Showing results for: <strong>"{{ request('search') }}"</strong>
+                    <a href="{{ route('members.index') }}" class="text-decoration-none ms-2">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </a>
+                </small>
+            </div>
+        @endif
+    </div>
+</div>
+
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
         <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
