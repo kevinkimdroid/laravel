@@ -12,34 +12,55 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 @auth
-                    <li class="nav-item">
-                        <a class="nav-link text-white px-3 py-2" href="{{ route('dashboard') }}" style="font-weight: 500; display: block;">
-                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
-                        </a>
-                    </li>
-
                     @if(auth()->user() && auth()->user()->role === 'admin')
+                        {{-- Admin Navigation --}}
                         <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2" href="{{ route('members.index') }}" style="font-weight: 500; display: block;">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}" style="font-weight: 500; display: block;">
                                 <i class="bi bi-people me-1"></i>Members
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2" href="{{ route('contributions.index') }}" style="font-weight: 500; display: block;">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('contributions.*') ? 'active' : '' }}" href="{{ route('contributions.index') }}" style="font-weight: 500; display: block;">
                                 <i class="bi bi-cash-stack me-1"></i>Contributions
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2" href="{{ route('expenses.index') }}" style="font-weight: 500; display: block;">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('calendar-activities.*') ? 'active' : '' }}" href="{{ route('calendar-activities.index') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-calendar-event me-1"></i>Calendar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('expenses.index') }}" style="font-weight: 500; display: block;">
                                 <i class="bi bi-receipt me-1"></i>Expenses
                             </a>
                         </li>
                     @elseif(auth()->user())
+                        {{-- Member Navigation --}}
                         <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2" href="{{ route('member.contributions') }}" style="font-weight: 500; display: block;">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.*') ? 'active' : '' }}" href="{{ route('member.dashboard') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-speedometer2 me-1"></i>My Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.contributions') ? 'active' : '' }}" href="{{ route('member.contributions') }}" style="font-weight: 500; display: block;">
                                 <i class="bi bi-cash-stack me-1"></i>My Contributions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.calendar') ? 'active' : '' }}" href="{{ route('member.calendar') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-calendar-event me-1"></i>Calendar
+                            </a>
+                        </li>
+                    @else
+                        {{-- Generic Navigation --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white px-3 py-2" href="{{ route('dashboard') }}" style="font-weight: 500; display: block;">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
                             </a>
                         </li>
                     @endif

@@ -1,44 +1,14 @@
-@extends('layouts.app')
-
-@section('title', 'Pay Contribution via M-Pesa')
-
-@section('content')
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <div>
-                <h3 class="mb-1 fw-bold text-primary">
-                    <i class="bi bi-phone me-2"></i>Pay via M-Pesa
-                </h3>
-                <p class="text-muted mb-0">
-                    Member: <strong>{{ $member->name }}</strong> ({{ $member->member_no }})
-                </p>
-            </div>
-            <a href="{{ route('member.contributions') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Back to Contributions
-            </a>
+@if($pendingPayments && $pendingPayments->count() > 0)
+<div class="alert alert-warning alert-dismissible fade show shadow-sm mb-4" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-hourglass-split me-3" style="font-size: 2rem;"></i>
+        <div class="flex-grow-1">
+            <h5 class="alert-heading mb-1">Pending Payment Requests</h5>
+            <p class="mb-0">You have <strong>{{ $pendingPayments->count() }}</strong> payment request(s) awaiting admin approval.</p>
         </div>
     </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
-@if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        <strong>Error:</strong>
-        <ul class="mb-0 mt-2">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
 @endif
 
 <!-- M-Pesa Payment Instructions -->
@@ -69,7 +39,7 @@
                     </h6>
                     <p class="mb-2"><strong>Till Number:</strong> <span class="badge bg-primary fs-6">123456</span></p>
                     <p class="mb-2"><strong>Account Name:</strong> Eldoret Club</p>
-                    <p class="mb-0"><strong>Note:</strong> After payment, submit the M-Pesa confirmation message details below. Your payment will be verified and recorded by the admin.</p>
+                    <p class="mb-0"><strong>Note:</strong> After payment, submit the M-Pesa confirmation message details below.</p>
                 </div>
             </div>
         </div>
@@ -77,7 +47,7 @@
 </div>
 
 <!-- Payment Submission Form -->
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-light">
         <h5 class="mb-0 fw-semibold">
             <i class="bi bi-receipt me-2"></i>Submit Payment Details
@@ -100,7 +70,6 @@
                             Registration Fee
                         </option>
                     </select>
-                    <small class="text-muted">Select what you are paying for</small>
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -119,26 +88,19 @@
                                placeholder="Enter amount paid"
                                required>
                     </div>
-                    <small class="text-muted">Enter the exact amount you paid via M-Pesa</small>
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label fw-semibold">
                         <i class="bi bi-calendar3 me-2 text-primary"></i>Payment Date
                     </label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light">
-                            <i class="bi bi-calendar-check text-muted"></i>
-                        </span>
-                        <input type="date" 
-                               name="contribution_date" 
-                               id="contribution_date"
-                               class="form-control" 
-                               value="{{ old('contribution_date', date('Y-m-d')) }}" 
-                               required
-                               max="{{ date('Y-m-d') }}">
-                    </div>
-                    <small class="text-muted">Date you made the M-Pesa payment</small>
+                    <input type="date" 
+                           name="contribution_date" 
+                           id="contribution_date"
+                           class="form-control" 
+                           value="{{ old('contribution_date', date('Y-m-d')) }}" 
+                           required
+                           max="{{ date('Y-m-d') }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -154,7 +116,7 @@
                            pattern="[A-Z0-9]{10}"
                            maxlength="10"
                            style="text-transform: uppercase;">
-                    <small class="text-muted">Enter the 10-character M-Pesa confirmation code (e.g., QH7A2B3C4D)</small>
+                    <small class="text-muted">10-character M-Pesa confirmation code</small>
                 </div>
 
                 <div class="col-12 mb-4">
@@ -164,31 +126,34 @@
                     <textarea name="mpesa_message" 
                               class="form-control" 
                               rows="3"
-                              placeholder="Paste the full M-Pesa confirmation message here (optional but recommended)">{{ old('mpesa_message') }}</textarea>
-                    <small class="text-muted">Copy and paste the complete M-Pesa SMS confirmation message for verification</small>
+                              placeholder="Paste the full M-Pesa confirmation message here (optional)">{{ old('mpesa_message') }}</textarea>
                 </div>
-            </div>
-
-            <div class="alert alert-warning shadow-sm">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                <strong>Important:</strong> 
-                <ul class="mb-0 mt-2">
-                    <li>Make sure you have completed the M-Pesa payment before submitting this form</li>
-                    <li>Double-check the transaction code and amount</li>
-                    <li>Your payment will be verified by the admin before being recorded</li>
-                    <li>You will receive a notification once your payment is confirmed</li>
-                </ul>
             </div>
 
             <div class="d-flex gap-3 mt-4">
                 <button type="submit" class="btn btn-success btn-lg">
                     <i class="bi bi-check-circle me-2"></i>Submit Payment Details
                 </button>
-                <a href="{{ route('member.contributions') }}" class="btn btn-outline-secondary btn-lg">
-                    <i class="bi bi-x-circle me-2"></i>Cancel
-                </a>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Payment Calendar -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-calendar-month me-2"></i>Contribution Calendar
+        </h5>
+    </div>
+    <div class="card-body">
+        <div id="paymentCalendar"></div>
+        <div class="mt-3">
+            <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Green dates indicate months with contributions. Click on a date to see contribution details.
+            </small>
+        </div>
     </div>
 </div>
 
@@ -197,5 +162,68 @@
     document.querySelector('input[name="mpesa_code"]')?.addEventListener('input', function(e) {
         e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     });
+
+    // Calendar display with contribution dates
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('paymentCalendar');
+        if (calendarEl) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            
+            // Get contribution dates
+            const contributionDates = @json($contributions->pluck('contribution_date')->map(function($date) {
+                return $date->format('Y-m-d');
+            })->toArray());
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            let calendarHTML = '<div class="table-responsive"><table class="table table-bordered text-center">';
+            calendarHTML += '<thead><tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead><tbody>';
+            
+            let day = 1;
+            for (let i = 0; i < 6; i++) {
+                calendarHTML += '<tr>';
+                for (let j = 0; j < 7; j++) {
+                    if (i === 0 && j < startingDayOfWeek) {
+                        calendarHTML += '<td></td>';
+                    } else if (day > daysInMonth) {
+                        calendarHTML += '<td></td>';
+                    } else {
+                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        const isPast = new Date(dateStr) < new Date('2024-07-01');
+                        const isToday = dateStr === new Date().toISOString().split('T')[0];
+                        const hasContribution = contributionDates.includes(dateStr);
+                        let className = '';
+                        if (isPast) className = 'text-muted bg-light';
+                        if (isToday) className = 'bg-primary text-white fw-bold';
+                        if (hasContribution) className = 'bg-success text-white fw-bold';
+                        if (isToday && hasContribution) className = 'bg-info text-white fw-bold';
+                        
+                        calendarHTML += `<td class="${className}" style="cursor: pointer;" onclick="selectDate('${dateStr}')">${day}</td>`;
+                        day++;
+                    }
+                }
+                calendarHTML += '</tr>';
+                if (day > daysInMonth) break;
+            }
+            calendarHTML += '</tbody></table></div>';
+            calendarEl.innerHTML = calendarHTML;
+        }
+    });
+
+    function selectDate(dateStr) {
+        const date = new Date(dateStr);
+        const minDate = new Date('2024-07-01');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (date >= minDate && date <= today) {
+            document.getElementById('contribution_date').value = dateStr;
+        }
+    }
 </script>
-@endsection
+

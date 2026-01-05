@@ -118,6 +118,77 @@
         </div>
     </div>
 </div>
+
+<!-- WhatsApp Reminders Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #25D366 !important;">
+    <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-whatsapp me-2" style="color: #25D366;"></i>WhatsApp Reminders
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Send payment reminders to members with outstanding balances via WhatsApp.</p>
+        <a href="{{ route('whatsapp.index') }}" class="btn btn-success" style="background-color: #25D366; border-color: #25D366;">
+            <i class="bi bi-whatsapp me-1"></i>Send WhatsApp Reminders
+        </a>
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-info bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-file-earmark-text me-2 text-info"></i>Reports
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 border rounded">
+                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-semibold mb-1">Men Outstanding Balances</h6>
+                        <p class="text-muted small mb-0">Download report of men with outstanding balances (as of current month)</p>
+                    </div>
+                    <a href="{{ route('reports.outstanding-balances') }}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-download me-1"></i>Download
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 border rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-trophy text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-semibold mb-1">Best Contributors</h6>
+                        <p class="text-muted small mb-0">Download report of top contributing members</p>
+                    </div>
+                    <a href="{{ route('reports.best-contributors') }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-download me-1"></i>Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WhatsApp Reminders Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #25D366 !important;">
+    <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-whatsapp me-2" style="color: #25D366;"></i>WhatsApp Reminders
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Send payment reminders to members with outstanding balances via WhatsApp.</p>
+        <a href="{{ route('whatsapp.index') }}" class="btn btn-success" style="background-color: #25D366; border-color: #25D366;">
+            <i class="bi bi-whatsapp me-1"></i>Send WhatsApp Reminders
+        </a>
+    </div>
+</div>
 @else
 <div class="row">
     <div class="col-md-6 offset-md-3">

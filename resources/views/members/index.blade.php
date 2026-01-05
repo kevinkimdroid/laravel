@@ -13,7 +13,10 @@
                 <p class="text-muted mb-0">Total Members: <strong>{{ $members->count() }}</strong></p>
             </div>
             <div class="mt-3 mt-md-0">
-                <a href="{{ route('members.import.form') }}" class="btn btn-success me-2">
+                <a href="{{ route('whatsapp.index') }}" class="btn btn-success me-2" style="background-color: #25D366; border-color: #25D366;">
+                    <i class="bi bi-whatsapp me-1"></i>WhatsApp Reminders
+                </a>
+                <a href="{{ route('members.import.form') }}" class="btn btn-outline-success me-2">
                     <i class="bi bi-upload me-1"></i>Import CSV
                 </a>
                 <a href="{{ route('members.create') }}" class="btn btn-primary">
@@ -60,6 +63,7 @@
                         <th class="text-white">Member No</th>
                         <th class="text-white">Name</th>
                         <th class="text-white">Phone</th>
+                        <th class="text-white">Registration</th>
                         <th class="text-white">Date</th>
                         <th class="text-white">Status</th>
                         <th class="text-white text-center">Actions</th>
@@ -79,6 +83,21 @@
                             @endif
                         </td>
                         <td>
+                            @if($member->isRegistered ?? false)
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>Registered
+                                </span>
+                                <br>
+                                <small class="text-success">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} (in bank)</small>
+                            @else
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Not Registered
+                                </span>
+                                <br>
+                                <small class="text-muted">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} / 1,000.00</small>
+                            @endif
+                        </td>
+                        <td>
                             <i class="bi bi-calendar3 me-1 text-muted"></i>
                             <span class="text-muted">{{ $member->created_at->format('M d, Y') }}</span>
                         </td>
@@ -91,6 +110,10 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
+                                <a href="{{ route('members.show', $member->id) }}"
+                                   class="btn btn-sm btn-primary" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="{{ route('members.statement', $member->id) }}"
                                    class="btn btn-sm btn-info" title="View Statement">
                                     <i class="bi bi-file-text"></i>

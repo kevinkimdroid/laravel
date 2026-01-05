@@ -41,6 +41,11 @@
             border-radius: 5px !important;
             color: white !important;
         }
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.3) !important;
+            border-radius: 5px !important;
+            font-weight: 600 !important;
+        }
         .navbar-toggler {
             border-color: rgba(255, 255, 255, 0.5) !important;
         }

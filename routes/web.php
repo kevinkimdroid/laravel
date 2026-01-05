@@ -60,12 +60,22 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Simple Dashboard Route
+    | Main Dashboard Route - Smart Redirect Based on Role
     |--------------------------------------------------------------------------
-    | For now, always show the default dashboard view.
-    | You can later customize it per role without redirects.
+    | - Admins: Redirect to Admin Dashboard (with calendar, stats, etc.)
+    | - Members: Redirect to Member Dashboard (their contributions)
+    | - Others: Show generic dashboard
     */
     Route::get('/dashboard', function () {
+        $user = auth()->user();
+        
+        if ($user && $user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user && $user->role === 'member') {
+            return redirect()->route('member.dashboard');
+        }
+        
+        // Fallback for other roles or if no role
         return view('dashboard');
     })->name('dashboard');
 
@@ -136,6 +146,42 @@ Route::middleware('auth')->group(function () {
 
         // Financial records (upload name, initials, registration, months, deficit, expected amount, aging)
         Route::resource('financial-records', FinancialRecordController::class);
+
+        // Reports
+        Route::get('/reports/outstanding-balances', [\App\Http\Controllers\ReportController::class, 'outstandingBalances'])
+            ->name('reports.outstanding-balances');
+        Route::get('/reports/best-contributors', [\App\Http\Controllers\ReportController::class, 'bestContributors'])
+            ->name('reports.best-contributors');
+
+        // WhatsApp Reminders
+        Route::get('/whatsapp/reminders', [\App\Http\Controllers\WhatsAppController::class, 'index'])
+            ->name('whatsapp.index');
+        Route::get('/whatsapp/send/{member}', [\App\Http\Controllers\WhatsAppController::class, 'generateLink'])
+            ->name('whatsapp.send');
+        Route::post('/whatsapp/send-bulk', [\App\Http\Controllers\WhatsAppController::class, 'sendBulkReminders'])
+            ->name('whatsapp.send-bulk');
+
+        // Payment Requests Management
+        Route::get('/admin/payment-requests', [AdminController::class, 'paymentRequests'])
+            ->name('admin.payment-requests');
+        Route::post('/admin/payment-requests/{paymentRequest}/approve', [AdminController::class, 'approvePayment'])
+            ->name('admin.payment-requests.approve');
+        Route::post('/admin/payment-requests/{paymentRequest}/reject', [AdminController::class, 'rejectPayment'])
+            ->name('admin.payment-requests.reject');
+
+        // QPL Games Management
+        Route::get('qpl-games/generate', [\App\Http\Controllers\QplGameController::class, 'generateForm'])
+            ->name('qpl-games.generate.form');
+        Route::post('qpl-games/generate', [\App\Http\Controllers\QplGameController::class, 'generate'])
+            ->name('qpl-games.generate');
+        Route::post('qpl-games/delete-generated', [\App\Http\Controllers\QplGameController::class, 'deleteGenerated'])
+            ->name('qpl-games.delete-generated');
+        Route::get('qpl-games/standings', [\App\Http\Controllers\QplGameController::class, 'standings'])
+            ->name('qpl-games.standings');
+        Route::resource('qpl-games', \App\Http\Controllers\QplGameController::class);
+
+        // Calendar Activities Management (admin only - full CRUD)
+        Route::resource('calendar-activities', \App\Http\Controllers\CalendarActivityController::class);
     });
 
     /*
@@ -158,6 +204,10 @@ Route::middleware('auth')->group(function () {
             ->name('member.contributions.pay.form');
         Route::post('/member/contributions/pay', [ContributionController::class, 'pay'])
             ->name('member.contributions.pay');
+
+        // Member views calendar (read-only)
+        Route::get('/member/calendar', [\App\Http\Controllers\CalendarActivityController::class, 'index'])
+            ->name('member.calendar');
     });
 
     /*

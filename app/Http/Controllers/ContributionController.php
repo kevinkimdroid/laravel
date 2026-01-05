@@ -18,16 +18,25 @@ class ContributionController extends Controller
         $year = $request->get('year', now()->year);
         $year = (int) $year; // Ensure it's an integer
 
-        // Aggregate contributions per member per month for the selected year
+        // Aggregate monthly contributions per member per month for the selected year (exclude registration fees)
         $aggregated = Contribution::selectRaw('member_id, YEAR(contribution_date) as year, MONTH(contribution_date) as month, SUM(amount) as total')
             ->whereYear('contribution_date', $year)
+            ->where('type', 'monthly_contribution')
             ->groupBy('member_id', 'year', 'month')
             ->get();
 
         $members = Member::orderBy('name')->get();
 
         $rows = [];
-        $monthlyKeys = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        // For 2024, only show months from July onwards (club started in July)
+        // For other years, show all 12 months
+        $monthlyKeys = $year == 2024 
+            ? ['jul','aug','sep','oct','nov','dec'] 
+            : ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+        // Determine expected monthly contribution amount based on year
+        // 2024-2025: 250 per month, 2026+: 300 per month
+        $expectedPerMonth = ($year >= 2026) ? 300 : 250;
 
         foreach ($members as $member) {
             $months = array_fill_keys($monthlyKeys, 0);
@@ -36,41 +45,95 @@ class ContributionController extends Controller
 
             foreach ($memberAgg as $item) {
                 $index = (int) $item->month; // 1..12
-                $key = $monthlyKeys[$index - 1] ?? null;
-                if ($key) {
+                $allMonthKeys = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+                $key = $allMonthKeys[$index - 1] ?? null;
+                // Only include the month if it's in our display keys
+                if ($key && in_array($key, $monthlyKeys)) {
                     $months[$key] = (float) $item->total;
                 }
             }
 
             $totalPaid = array_sum($months);
 
-            // Assume expected monthly contribution is 250
-            $expectedPerMonth = 250;
-            $expectedTotal = $expectedPerMonth * 12;
+            // Calculate actual outstanding balance: previous + current month (not year-based)
+            $joinDate = $member->getJoinDate(); // First contribution = joining date
+            
+            // Previous outstanding (from join date to end of last month)
+            $endOfLastMonth = \Carbon\Carbon::now()->subMonth()->endOfMonth();
+            if ($endOfLastMonth < $joinDate) {
+                $endOfLastMonth = $joinDate->copy()->subDay();
+            }
+            
+            $previousExpected = 0;
+            $currentDate = clone $joinDate;
+            while ($currentDate <= $endOfLastMonth) {
+                $year = $currentDate->year;
+                $expectedMonthly = ($year >= 2026) ? 300 : 250;
+                $previousExpected += $expectedMonthly;
+                $currentDate->addMonth();
+            }
+            
+            $previousPaid = $member->contributions()
+                ->where('type', 'monthly_contribution')
+                ->where('contribution_date', '>=', $joinDate)
+                ->where('contribution_date', '<=', $endOfLastMonth)
+                ->sum('amount');
+            
+            $previousOutstanding = max(0, $previousExpected - $previousPaid);
+            
+            // Current month's outstanding (only current month)
+            $currentMonth = \Carbon\Carbon::now()->startOfMonth();
+            $currentMonthExpected = 0;
+            if ($currentMonth >= $joinDate) {
+                $year = $currentMonth->year;
+                $currentMonthExpected = ($year >= 2026) ? 300 : 250;
+            }
+            
+            $currentMonthPaid = $member->contributions()
+                ->where('type', 'monthly_contribution')
+                ->where('contribution_date', '>=', $currentMonth)
+                ->where('contribution_date', '<=', \Carbon\Carbon::now()->endOfMonth())
+                ->sum('amount');
+            
+            $currentMonthOutstanding = max(0, $currentMonthExpected - $currentMonthPaid);
+            
+            // Total outstanding = previous + current month (this is what we display)
+            $deficit = $previousOutstanding + $currentMonthOutstanding;
+            
+            // Calculate expected total for the selected year (for display purposes)
+            $expectedTotal = $expectedPerMonth * count($monthlyKeys);
+            
+            // Aging in months: how many months behind based on outstanding
+            $avgExpectedMonthly = ($year >= 2026) ? 300 : 250;
+            $aging = $avgExpectedMonthly > 0 ? (int) floor($deficit / $avgExpectedMonthly) : 0;
 
-            $deficit = max(0, $expectedTotal - $totalPaid);
+            // Get registration fee total for this member
+            $registrationFee = Contribution::where('member_id', $member->id)
+                ->where('type', 'registration_fee')
+                ->whereYear('contribution_date', $year)
+                ->sum('amount');
 
-            // Aging in months: how many months behind based on deficit
-            $aging = $expectedPerMonth > 0 ? (int) floor($deficit / $expectedPerMonth) : 0;
-
-            // Simple initials from member name (e.g. "John Doe" => "JD")
-            $initials = collect(explode(' ', $member->name))
+            // Use member's initials from database, or generate from name if not available
+            $initials = $member->initials ?? collect(explode(' ', $member->name))
                 ->filter()
                 ->map(fn ($part) => strtoupper(mb_substr($part, 0, 1)))
                 ->implode('');
 
             $rows[] = [
                 'member'   => $member,
-                'initials' => $initials,
+                'initials' => $initials ?: '-',
                 'months'   => $months,
                 'deficit'  => $deficit,
                 'aging'    => $aging,
+                'registration_fee' => $registrationFee,
             ];
         }
 
         return view('contributions.index', [
             'year' => $year,
             'rows' => $rows,
+            'monthlyKeys' => $monthlyKeys,
+            'expectedPerMonth' => $expectedPerMonth,
         ]);
     }
 
@@ -91,12 +154,20 @@ class ContributionController extends Controller
         // Validate input
         $validated = $request->validate([
             'member_id' => 'required|exists:members,id',
+            'type' => 'required|in:registration_fee,monthly_contribution',
             'amount' => 'nullable|numeric|min:0.01',
             'contribution_date' => 'required|date'
         ]);
 
-        // Default monthly contribution is 250 if amount not provided
-        $amount = $validated['amount'] ?? 250;
+        // Set default amount based on type
+        $type = $validated['type'];
+        $contributionDate = \Carbon\Carbon::parse($validated['contribution_date']);
+        $contributionYear = $contributionDate->year;
+        
+        // Monthly contribution: 250 for 2024-2025, 300 for 2026+
+        $monthlyDefault = ($contributionYear >= 2026) ? 300 : 250;
+        $defaultAmount = $type === 'registration_fee' ? 1000 : $monthlyDefault;
+        $amount = $validated['amount'] ?? $defaultAmount;
 
         // Ensure we have a "Contributions" account
         $account = Account::firstOrCreate(
@@ -110,6 +181,7 @@ class ContributionController extends Controller
         $contribution = Contribution::create([
             'member_id' => $request->member_id,
             'amount' => $amount,
+            'type' => $type,
             'contribution_date' => $request->contribution_date,
             'transaction_ref' => $ref,
         ]);
@@ -144,16 +216,20 @@ class ContributionController extends Controller
     {
         $validated = $request->validate([
             'member_id' => 'required|exists:members,id',
+            'type' => 'required|in:registration_fee,monthly_contribution',
             'amount' => 'nullable|numeric|min:0.01',
             'contribution_date' => 'required|date'
         ]);
 
         $oldAmount = $contribution->amount;
-        $amount = $validated['amount'] ?? 250;
+        $type = $validated['type'];
+        $defaultAmount = $type === 'registration_fee' ? 1000 : 300;
+        $amount = $validated['amount'] ?? $defaultAmount;
 
         $contribution->update([
             'member_id' => $validated['member_id'],
             'amount' => $amount,
+            'type' => $type,
             'contribution_date' => $validated['contribution_date'],
         ]);
 
@@ -225,9 +301,18 @@ class ContributionController extends Controller
             ->orderByDesc('contribution_date')
             ->get();
 
-        $total = $contributions->sum('amount');
+        // Get pending payment requests
+        $pendingPayments = \App\Models\PaymentRequest::where('member_id', $member->id)
+            ->where('status', 'pending')
+            ->orderByDesc('created_at')
+            ->get();
 
-        return view('contributions.my', compact('member', 'contributions', 'total'));
+        // Calculate totals separately
+        $total = $contributions->sum('amount');
+        $monthlyTotal = $contributions->where('type', 'monthly_contribution')->sum('amount');
+        $registrationTotal = $contributions->where('type', 'registration_fee')->sum('amount');
+
+        return view('contributions.my', compact('member', 'contributions', 'total', 'monthlyTotal', 'registrationTotal', 'pendingPayments'));
     }
 
     /**
@@ -259,37 +344,43 @@ class ContributionController extends Controller
         }
 
         $validated = $request->validate([
-            'amount' => 'nullable|numeric|min:0.01',
-            'contribution_date' => 'required|date',
+            'type' => 'required|in:registration_fee,monthly_contribution',
+            'amount' => 'required|numeric|min:0.01',
+            'contribution_date' => ['required', 'date', 'after_or_equal:2024-07-01', 'before_or_equal:today'],
+            'mpesa_code' => 'required|string|size:10|regex:/^[A-Z0-9]{10}$/',
+            'mpesa_message' => 'nullable|string|max:500',
         ]);
 
-        $amount = $validated['amount'] ?? 250;
+        $type = $validated['type'];
+        $amount = $validated['amount'];
+        
+        // Normalize M-Pesa code to uppercase
+        $mpesaCode = strtoupper(preg_replace('/[^A-Z0-9]/', '', $validated['mpesa_code']));
 
-        $account = Account::firstOrCreate(
-            ['slug' => 'contributions'],
-            ['name' => 'Contributions Account', 'balance' => 0]
-        );
+        // Check if M-Pesa code already exists
+        $existingRequest = \App\Models\PaymentRequest::where('mpesa_code', $mpesaCode)
+            ->where('status', '!=', 'rejected')
+            ->first();
 
-        $ref = 'SELF-' . now()->format('YmdHis') . '-' . $user->member_id;
+        if ($existingRequest) {
+            return back()
+                ->withInput()
+                ->withErrors(['mpesa_code' => 'This M-Pesa transaction code has already been submitted.']);
+        }
 
-        Contribution::create([
+        // Create payment request (pending approval)
+        \App\Models\PaymentRequest::create([
             'member_id' => $user->member_id,
+            'type' => $type,
             'amount' => $amount,
-            'contribution_date' => $validated['contribution_date'],
-            'transaction_ref' => $ref,
+            'payment_date' => $validated['contribution_date'],
+            'mpesa_code' => $mpesaCode,
+            'mpesa_message' => $validated['mpesa_message'] ?? null,
+            'status' => 'pending',
         ]);
-
-        Transaction::create([
-            'account_id' => $account->id,
-            'income' => $amount,
-            'expense' => 0,
-            'transaction_date' => $validated['contribution_date'],
-        ]);
-
-        $account->increment('balance', $amount);
 
         return redirect()->route('member.contributions')
-            ->with('success', 'Contribution recorded successfully.');
+            ->with('success', 'Payment details submitted successfully! Your payment will be verified and recorded by the admin. You will be notified once it\'s confirmed.');
     }
 
     /**

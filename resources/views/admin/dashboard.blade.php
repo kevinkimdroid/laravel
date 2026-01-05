@@ -188,7 +188,7 @@
 
 <!-- Quick Actions -->
 <div class="row g-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #667eea !important;">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-3">
@@ -207,7 +207,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #28a745 !important;">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-3">
@@ -226,12 +226,53 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-3">
                     <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-receipt-cutoff text-warning" style="font-size: 2rem;"></i>
+                        <i class="bi bi-trophy text-warning" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">QBASH Pool League</h6>
+                        <h4 class="fw-bold mb-0">{{ \App\Models\QplGame::count() }}</h4>
+                    </div>
+                </div>
+                <p class="text-muted mb-3">Record and manage QBASH Pool League game scores.</p>
+                <a href="{{ route('qpl-games.index') }}" class="btn btn-warning w-100">
+                    <i class="bi bi-trophy me-1"></i>Manage QBASH Pool League
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ff6b6b !important;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-calendar-event text-danger" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">Calendar</h6>
+                        <h4 class="fw-bold mb-0">{{ \App\Models\CalendarActivity::count() }}</h4>
+                    </div>
+                </div>
+                <p class="text-muted mb-3">Create and manage calendar activities for the year.</p>
+                <a href="{{ route('calendar-activities.index') }}" class="btn btn-danger w-100">
+                    <i class="bi bi-calendar-plus me-1"></i>Manage Calendar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #6c757d !important;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-secondary bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-receipt-cutoff text-secondary" style="font-size: 2rem;"></i>
                     </div>
                     <div>
                         <h6 class="text-muted text-uppercase small mb-0">Financials</h6>
@@ -240,7 +281,7 @@
                 </div>
                 <p class="text-muted mb-3">See expenses and financial records for better management.</p>
                 <div class="d-grid gap-2">
-                    <a href="{{ route('expenses.index') }}" class="btn btn-warning">
+                    <a href="{{ route('expenses.index') }}" class="btn btn-secondary">
                         <i class="bi bi-receipt me-1"></i>Expenses
                     </a>
                     @if (Route::has('financial-records.index'))
@@ -251,6 +292,117 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+@php
+    $pendingPayments = \App\Models\PaymentRequest::where('status', 'pending')->count();
+@endphp
+
+@if($pendingPayments > 0)
+<div class="alert alert-info alert-dismissible fade show shadow-sm mb-4" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-credit-card me-3" style="font-size: 2rem;"></i>
+        <div class="flex-grow-1">
+            <h5 class="alert-heading mb-1">Pending Payment Requests</h5>
+            <p class="mb-0">You have <strong>{{ $pendingPayments }}</strong> M-Pesa payment request(s) waiting for approval.</p>
+        </div>
+        <div>
+            <a href="{{ route('admin.payment-requests') }}" class="btn btn-info">
+                <i class="bi bi-credit-card me-1"></i>Review Payments
+            </a>
+        </div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+<!-- Payment Requests Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #0d6efd !important;">
+    <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-credit-card me-2 text-primary"></i>Payment Requests
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Review and approve M-Pesa payment requests from members.</p>
+        <a href="{{ route('admin.payment-requests') }}" class="btn btn-primary">
+            <i class="bi bi-credit-card me-1"></i>Manage Payment Requests
+            @if($pendingPayments > 0)
+                <span class="badge bg-danger ms-2">{{ $pendingPayments }}</span>
+            @endif
+        </a>
+    </div>
+</div>
+
+<!-- WhatsApp Reminders Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #25D366 !important;">
+    <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-whatsapp me-2" style="color: #25D366;"></i>WhatsApp Reminders
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Send payment reminders to members with outstanding balances via WhatsApp.</p>
+        <a href="{{ route('whatsapp.index') }}" class="btn btn-success" style="background-color: #25D366; border-color: #25D366;">
+            <i class="bi bi-whatsapp me-1"></i>Send WhatsApp Reminders
+        </a>
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-info bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-file-earmark-text me-2 text-info"></i>Reports
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 border rounded">
+                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-semibold mb-1">Men Outstanding Balances</h6>
+                        <p class="text-muted small mb-0">Download report of men with outstanding balances (as of current month)</p>
+                    </div>
+                    <a href="{{ route('reports.outstanding-balances') }}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-download me-1"></i>Download
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 border rounded">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-trophy text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-semibold mb-1">Best Contributors</h6>
+                        <p class="text-muted small mb-0">Download report of top contributing members</p>
+                    </div>
+                    <a href="{{ route('reports.best-contributors') }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-download me-1"></i>Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calendar Activities Section -->
+<div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #ff6b6b !important;">
+    <div class="card-header bg-danger bg-opacity-10 border-0 py-3">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-calendar-event me-2 text-danger"></i>Calendar Activities
+        </h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">Create and manage calendar activities for the year (meetings, events, games, etc.).</p>
+        <a href="{{ route('calendar-activities.index') }}" class="btn btn-danger">
+            <i class="bi bi-calendar-plus me-1"></i>Manage Calendar
+        </a>
     </div>
 </div>
 @endsection

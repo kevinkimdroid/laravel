@@ -1,0 +1,250 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\QplGame;
+use App\Models\Member;
+
+class QplGameController extends Controller
+{
+    /**
+     * Display a listing of QPL games.
+     */
+    public function index()
+    {
+        $games = QplGame::orderBy('game_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('qpl-games.index', compact('games'));
+    }
+
+    /**
+     * Show form to generate fixtures automatically between members.
+     */
+    public function generateForm()
+    {
+        return view('qpl-games.generate');
+    }
+
+    /**
+     * Generate round-robin fixtures between members starting from a date.
+     */
+    public function generate(Request $request)
+    {
+        $data = $request->validate([
+            'start_date' => 'required|date',
+        ]);
+
+        $startDate = $data['start_date'];
+
+        // Get all members ordered by member number
+        $members = Member::orderBy('member_no')->get();
+
+        if ($members->count() < 2) {
+            return redirect()->route('qpl-games.index')
+                ->with('success', 'Need at least 2 members to generate fixtures.');
+        }
+
+        // Simple round-robin: every distinct pair (A vs B)
+        $gamesToCreate = [];
+        $count = $members->count();
+
+        for ($i = 0; $i < $count; $i++) {
+            for ($j = $i + 1; $j < $count; $j++) {
+                $memberA = $members[$i];
+                $memberB = $members[$j];
+
+                $gamesToCreate[] = [
+                    'game_date' => $startDate,
+                    'home_team' => $memberA->name,
+                    'away_team' => $memberB->name,
+                    'home_score' => 0,
+                    'away_score' => 0,
+                    'venue' => null,
+                    'notes' => 'Auto-generated fixture',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        // Insert all fixtures
+        QplGame::insert($gamesToCreate);
+
+        return redirect()->route('qpl-games.index')
+            ->with('success', 'QBASH Pool League fixtures generated successfully from ' . $startDate . '. You can now edit or delete individual games.');
+    }
+
+    /**
+     * Show standings table for all members based on QBASH Pool League games.
+     */
+    public function standings()
+    {
+        $games = QplGame::all();
+
+        $table = [];
+
+        foreach ($games as $game) {
+            $home = $game->home_team;
+            $away = $game->away_team;
+
+            // Initialize rows if not present
+            if (!isset($table[$home])) {
+                $table[$home] = [
+                    'name' => $home,
+                    'played' => 0,
+                    'won' => 0,
+                    'drawn' => 0,
+                    'lost' => 0,
+                    'goals_for' => 0,
+                    'goals_against' => 0,
+                    'points' => 0,
+                ];
+            }
+            if (!isset($table[$away])) {
+                $table[$away] = [
+                    'name' => $away,
+                    'played' => 0,
+                    'won' => 0,
+                    'drawn' => 0,
+                    'lost' => 0,
+                    'goals_for' => 0,
+                    'goals_against' => 0,
+                    'points' => 0,
+                ];
+            }
+
+            // Update played and goals
+            $table[$home]['played']++;
+            $table[$away]['played']++;
+
+            $table[$home]['goals_for'] += $game->home_score;
+            $table[$home]['goals_against'] += $game->away_score;
+
+            $table[$away]['goals_for'] += $game->away_score;
+            $table[$away]['goals_against'] += $game->home_score;
+
+            // Determine result (3 points win, 1 draw)
+            if ($game->home_score > $game->away_score) {
+                $table[$home]['won']++;
+                $table[$home]['points'] += 3;
+                $table[$away]['lost']++;
+            } elseif ($game->home_score < $game->away_score) {
+                $table[$away]['won']++;
+                $table[$away]['points'] += 3;
+                $table[$home]['lost']++;
+            } else {
+                // draw
+                $table[$home]['drawn']++;
+                $table[$away]['drawn']++;
+                $table[$home]['points'] += 1;
+                $table[$away]['points'] += 1;
+            }
+        }
+
+        // Convert to collection and sort: points desc, goal difference desc, goals_for desc, name
+        $standings = collect($table)->map(function ($row) {
+            $row['goal_diff'] = $row['goals_for'] - $row['goals_against'];
+            return $row;
+        })->sortByDesc('points')
+          ->sortByDesc('goal_diff')
+          ->sortByDesc('goals_for')
+          ->values();
+
+        return view('qpl-games.standings', compact('standings'));
+    }
+
+    /**
+     * Show the form for creating a new QBASH Pool League game.
+     */
+    public function create()
+    {
+        $members = Member::orderBy('name')->get();
+
+        return view('qpl-games.create', compact('members'));
+    }
+
+    /**
+     * Store a newly created QPL game.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'game_date' => 'required|date',
+            'home_team' => 'required|string|max:255',
+            'away_team' => 'required|string|max:255',
+            'home_score' => 'required|integer|min:0',
+            'away_score' => 'required|integer|min:0',
+            'venue' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        QplGame::create($validated);
+
+        return redirect()->route('qpl-games.index')
+            ->with('success', 'QBASH Pool League game recorded successfully!');
+    }
+
+    /**
+     * Display the specified QBASH Pool League game.
+     */
+    public function show(QplGame $qplGame)
+    {
+        return view('qpl-games.show', compact('qplGame'));
+    }
+
+    /**
+     * Show the form for editing the specified QBASH Pool League game.
+     */
+    public function edit(QplGame $qplGame)
+    {
+        $members = Member::orderBy('name')->get();
+
+        return view('qpl-games.edit', compact('qplGame', 'members'));
+    }
+
+    /**
+     * Update the specified QPL game.
+     */
+    public function update(Request $request, QplGame $qplGame)
+    {
+        $validated = $request->validate([
+            'game_date' => 'required|date',
+            'home_team' => 'required|string|max:255',
+            'away_team' => 'required|string|max:255',
+            'home_score' => 'required|integer|min:0',
+            'away_score' => 'required|integer|min:0',
+            'venue' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        $qplGame->update($validated);
+
+        return redirect()->route('qpl-games.index')
+            ->with('success', 'QBASH Pool League game updated successfully!');
+    }
+
+    /**
+     * Remove the specified QPL game.
+     */
+    public function destroy(QplGame $qplGame)
+    {
+        $qplGame->delete();
+
+        return redirect()->route('qpl-games.index')
+            ->with('success', 'QBASH Pool League game deleted successfully!');
+    }
+
+    /**
+     * Delete all auto-generated fixtures (games with 'Auto-generated fixture' note).
+     */
+    public function deleteGenerated()
+    {
+        QplGame::where('notes', 'Auto-generated fixture')->delete();
+
+        return redirect()->route('qpl-games.index')
+            ->with('success', 'All auto-generated QBASH Pool League fixtures have been deleted.');
+    }
+}

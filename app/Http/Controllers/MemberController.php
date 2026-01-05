@@ -28,8 +28,113 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $members = Member::all();
+        $members = Member::with('contributions')->get();
+        
+        // Add registration status for each member
+        $members->each(function($member) {
+            $registrationFeePaid = $member->contributions()
+                ->where('type', 'registration_fee')
+                ->sum('amount');
+            $member->isRegistered = $registrationFeePaid >= 1000;
+            $member->registrationFeePaid = $registrationFeePaid;
+        });
+        
         return view('members.index', compact('members'));
+    }
+
+    /**
+     * Display the specified member with tabs.
+     */
+    public function show(Member $member)
+    {
+        // Get contributions for payment calendar
+        $contributions = Contribution::where('member_id', $member->id)
+            ->orderBy('contribution_date', 'asc')
+            ->get();
+
+        // Calculate outstanding balance: previous balance + current month only (not whole year)
+        $startDate = $member->getJoinDate(); // First contribution = joining date
+        
+        // Previous outstanding (from join date to end of last month)
+        $endOfLastMonth = \Carbon\Carbon::now()->subMonth()->endOfMonth();
+        if ($endOfLastMonth < $startDate) {
+            $endOfLastMonth = $startDate->copy()->subDay();
+        }
+        
+        $previousExpected = 0;
+        $currentDate = clone $startDate;
+        while ($currentDate <= $endOfLastMonth) {
+            $year = $currentDate->year;
+            $expectedMonthly = ($year >= 2026) ? 300 : 250;
+            $previousExpected += $expectedMonthly;
+            $currentDate->addMonth();
+        }
+        
+        $previousPaid = $member->contributions()
+            ->where('type', 'monthly_contribution')
+            ->where('contribution_date', '>=', $startDate)
+            ->where('contribution_date', '<=', $endOfLastMonth)
+            ->sum('amount');
+        
+        $previousOutstanding = max(0, $previousExpected - $previousPaid);
+        
+        // Current month's outstanding (only current month)
+        $currentMonth = \Carbon\Carbon::now()->startOfMonth();
+        $currentMonthExpected = 0;
+        if ($currentMonth >= $startDate) {
+            $year = $currentMonth->year;
+            $currentMonthExpected = ($year >= 2026) ? 300 : 250;
+        }
+        
+        $currentMonthPaid = $member->contributions()
+            ->where('type', 'monthly_contribution')
+            ->where('contribution_date', '>=', $currentMonth)
+            ->where('contribution_date', '<=', \Carbon\Carbon::now()->endOfMonth())
+            ->sum('amount');
+        
+        $currentMonthOutstanding = max(0, $currentMonthExpected - $currentMonthPaid);
+        
+        // Total outstanding = previous + current month
+        $outstanding = $previousOutstanding + $currentMonthOutstanding;
+        $expectedTotal = $previousExpected + $currentMonthExpected;
+        $totalPaid = $previousPaid + $currentMonthPaid;
+        
+        // Get registration status
+        $registrationFeePaid = $member->contributions()
+            ->where('type', 'registration_fee')
+            ->sum('amount');
+        $isRegistered = $registrationFeePaid >= 1000;
+
+        // Get pending payment requests
+        $pendingPayments = \App\Models\PaymentRequest::where('member_id', $member->id)
+            ->where('status', 'pending')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Get QPL games
+        $qplGames = \App\Models\QplGame::orderBy('game_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get upcoming calendar activities (from today onwards, scheduled or completed)
+        $upcomingActivities = \App\Models\CalendarActivity::where('activity_date', '>=', now()->startOfDay())
+            ->whereIn('status', ['scheduled', 'completed'])
+            ->orderBy('activity_date', 'asc')
+            ->orderBy('start_time', 'asc')
+            ->limit(20) // Show next 20 upcoming activities
+            ->get();
+
+        return view('members.show', compact(
+            'member',
+            'contributions',
+            'totalPaid',
+            'outstanding',
+            'isRegistered',
+            'registrationFeePaid',
+            'pendingPayments',
+            'qplGames',
+            'upcomingActivities'
+        ));
     }
 
     /**
@@ -42,11 +147,75 @@ public function statement(Member $member)
         ->get();
 
     $total = $contributions->sum('amount');
+    
+    // Calculate outstanding balance: previous balance + current month only (not whole year)
+    $startDate = $member->getJoinDate(); // First contribution = joining date
+    
+    // Previous outstanding (from join date to end of last month)
+    $endOfLastMonth = \Carbon\Carbon::now()->subMonth()->endOfMonth();
+    if ($endOfLastMonth < $startDate) {
+        $endOfLastMonth = $startDate->copy()->subDay();
+    }
+    
+    $previousExpected = 0;
+    $currentDate = clone $startDate;
+    while ($currentDate <= $endOfLastMonth) {
+        $year = $currentDate->year;
+        $expectedMonthly = ($year >= 2026) ? 300 : 250;
+        $previousExpected += $expectedMonthly;
+        $currentDate->addMonth();
+    }
+    
+    $previousPaid = $member->contributions()
+        ->where('type', 'monthly_contribution')
+        ->where('contribution_date', '>=', $startDate)
+        ->where('contribution_date', '<=', $endOfLastMonth)
+        ->sum('amount');
+    
+    $previousOutstanding = max(0, $previousExpected - $previousPaid);
+    
+    // Current month's outstanding (only current month)
+    $currentMonth = \Carbon\Carbon::now()->startOfMonth();
+    $currentMonthExpected = 0;
+    if ($currentMonth >= $startDate) {
+        $year = $currentMonth->year;
+        $currentMonthExpected = ($year >= 2026) ? 300 : 250;
+    }
+    
+    $currentMonthPaid = $member->contributions()
+        ->where('type', 'monthly_contribution')
+        ->where('contribution_date', '>=', $currentMonth)
+        ->where('contribution_date', '<=', \Carbon\Carbon::now()->endOfMonth())
+        ->sum('amount');
+    
+    $currentMonthOutstanding = max(0, $currentMonthExpected - $currentMonthPaid);
+    
+    // Total outstanding = previous + current month
+    $outstanding = $previousOutstanding + $currentMonthOutstanding;
+    $expectedTotal = $previousExpected + $currentMonthExpected;
+    $totalPaid = $previousPaid + $currentMonthPaid;
+    
+    // Calculate months behind
+    $months = $startDate->diffInMonths(\Carbon\Carbon::now()->endOfMonth()) + 1;
+    $avgExpectedMonthly = $months > 0 ? $expectedTotal / $months : 250;
+    $monthsBehind = $avgExpectedMonthly > 0 ? ceil($outstanding / $avgExpectedMonthly) : 0;
+    
+    // Check if member has paid registration fee (1000)
+    $registrationFeePaid = $member->contributions()
+        ->where('type', 'registration_fee')
+        ->sum('amount');
+    $isRegistered = $registrationFeePaid >= 1000;
 
     return view('members.statement', compact(
         'member',
         'contributions',
-        'total'
+        'total',
+        'expectedTotal',
+        'totalPaid',
+        'outstanding',
+        'monthsBehind',
+        'registrationFeePaid',
+        'isRegistered'
     ));
 }
 
@@ -82,13 +251,32 @@ public function statement(Member $member)
         }
 
         // Create the member
-        Member::create(array_merge($validated, [
+        $member = Member::create(array_merge($validated, [
             'status' => $validated['status'] ?? 'ACTIVE',
         ]));
 
+        // Create user account for member if phone is provided
+        if ($member->phone) {
+            // Check if user already exists with this phone
+            $existingUser = User::where('phone', $member->phone)->first();
+            
+            if (!$existingUser) {
+                // Create user account for member
+                User::create([
+                    'name' => $member->name,
+                    'initials' => $member->initials,
+                    'email' => $member->member_no . '@member.local',
+                    'phone' => $member->phone,
+                    'password' => Hash::make('eldoret2010'),
+                    'role' => 'member',
+                    'member_id' => $member->id,
+                ]);
+            }
+        }
+
         // Redirect back to index with success message
         return redirect()->route('members.index')
-                         ->with('success', 'Member created successfully!');
+                         ->with('success', 'Member created successfully! User account created with password: eldoret2010');
     }
 
     /**
@@ -250,9 +438,10 @@ public function statement(Member $member)
                             if (!$existingUser) {
                                 User::create([
                                     'name' => $member->name,
+                                    'initials' => $member->initials ?? '',
                                     'email' => $member->member_no . '@member.local',
                                     'phone' => $member->phone,
-                                    'password' => Hash::make('password'),
+                                    'password' => Hash::make('eldoret2010'),
                                     'role' => 'member',
                                     'member_id' => $member->id,
                                 ]);

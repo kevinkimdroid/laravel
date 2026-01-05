@@ -4,6 +4,63 @@
 @section('title', 'Contributions Overview')
 
 @section('content')
+<style>
+    .contributions-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    .contributions-table thead th {
+        vertical-align: middle;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        white-space: normal;
+        word-wrap: break-word;
+        padding: 12px 8px;
+        text-align: center;
+        color: white !important;
+        background: transparent !important;
+    }
+    .contributions-table tbody td {
+        vertical-align: middle;
+        border: 1px solid #dee2e6;
+        padding: 10px 8px;
+        text-align: center;
+    }
+    .contributions-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .contributions-table .col-sn {
+        width: 40px;
+    }
+    .contributions-table .col-member-no {
+        width: 70px;
+    }
+    .contributions-table .col-member-name {
+        width: 180px;
+        text-align: left !important;
+    }
+    .contributions-table .col-initials {
+        width: 60px;
+    }
+    .contributions-table .col-reg-fee {
+        width: 100px;
+    }
+    .contributions-table .col-month {
+        width: 65px;
+        text-align: right !important;
+        font-size: 0.85rem;
+    }
+    .contributions-table .col-outstanding {
+        width: 110px;
+        text-align: right !important;
+    }
+    .contributions-table .col-months-behind {
+        width: 90px;
+    }
+    .contributions-table .month-cell {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+</style>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -66,78 +123,120 @@
 
 <div class="alert alert-info shadow-sm mb-4">
     <i class="bi bi-info-circle me-2"></i>
-    Showing contributions per member for <strong>{{ $year }}</strong>, broken down by month, with deficit and aging based on an expected 250 per month.
+    @if($year == 2024)
+        Showing contributions per member for <strong>{{ $year }}</strong>. The club officially started in July 2024, so only months from July onwards are shown. Expected contributions: <strong>{{ number_format($expectedPerMonth, 0) }}/month</strong> for {{ count($monthlyKeys) }} months.
+    @else
+        Showing contributions per member for <strong>{{ $year }}</strong>, broken down by month, with deficit and aging based on an expected <strong>{{ number_format($expectedPerMonth, 0) }}/month</strong>.
+    @endif
     <strong>Monthly totals, deficit, and aging are automatically calculated from all contributions for the selected year.</strong>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <table class="table table-bordered table-hover mb-0 align-middle contributions-table">
+                <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important;">
             <tr>
-                <th rowspan="2" class="text-white">#</th>
-                <th rowspan="2" class="text-white">Member</th>
-                <th rowspan="2" class="text-white">Initials</th>
-                <th rowspan="2" class="text-white">Registration Fee</th>
-                <th colspan="12" class="text-white">Monthly Contributions</th>
-                <th rowspan="2" class="text-white">Deficit</th>
-                <th rowspan="2" class="text-white">Aging</th>
+                <th rowspan="2" class="text-white col-sn" style="font-weight: 600; color: white !important; background: transparent !important;">#</th>
+                <th rowspan="2" class="text-white col-member-no" style="font-weight: 600; color: white !important; background: transparent !important;">Mbr<br>No</th>
+                <th rowspan="2" class="text-white col-member-name" style="font-weight: 600; color: white !important; background: transparent !important;">Name</th>
+                <th rowspan="2" class="text-white col-initials" style="font-weight: 600; color: white !important; background: transparent !important;">Init</th>
+                <th rowspan="2" class="text-white col-reg-fee" style="font-weight: 600; color: white !important; background: transparent !important;">
+                    Reg Fee<br><small>(KES)</small>
+                </th>
+                <th colspan="{{ count($monthlyKeys) }}" class="text-white" style="font-weight: 600; color: white !important; background: transparent !important;">
+                    Monthly (KES)
+                </th>
+                <th rowspan="2" class="text-white col-outstanding" style="font-weight: 600; color: white !important; background: transparent !important;">
+                    Outstanding<br><small>(KES)</small>
+                </th>
+                <th rowspan="2" class="text-white col-months-behind" style="font-weight: 600; color: white !important; background: transparent !important;">
+                    Months<br>Behind
+                </th>
             </tr>
             <tr>
-                <th class="text-white">Jan</th>
-                <th class="text-white">Feb</th>
-                <th class="text-white">Mar</th>
-                <th class="text-white">Apr</th>
-                <th class="text-white">May</th>
-                <th class="text-white">Jun</th>
-                <th class="text-white">Jul</th>
-                <th class="text-white">Aug</th>
-                <th class="text-white">Sep</th>
-                <th class="text-white">Oct</th>
-                <th class="text-white">Nov</th>
-                <th class="text-white">Dec</th>
+                @if($year == 2024)
+                    {{-- For 2024, only show July-December --}}
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jul</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Aug</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Sep</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Oct</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Nov</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Dec</th>
+                @else
+                    {{-- For other years, show all 12 months --}}
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jan</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Feb</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Mar</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Apr</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">May</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jun</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jul</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Aug</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Sep</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Oct</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Nov</th>
+                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Dec</th>
+                @endif
             </tr>
         </thead>
         <tbody>
             @forelse($rows as $row)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $row['member']->name }}</td>
-                    <td class="text-center">{{ $row['initials'] }}</td>
-                    <td class="text-end">{{ number_format($row['member']->registration_fee ?? 1000, 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['jan'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['feb'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['mar'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['apr'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['may'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['jun'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['jul'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['aug'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['sep'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['oct'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['nov'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['months']['dec'], 2) }}</td>
-                    <td class="text-end">
-                        @if($row['deficit'] > 0)
-                            <span class="badge bg-danger">{{ number_format($row['deficit'], 2) }}</span>
+                    <td class="fw-semibold text-center">{{ $loop->iteration }}</td>
+                    <td class="fw-semibold text-center">{{ $row['member']->member_no }}</td>
+                    <td class="fw-semibold" style="text-align: left !important;">{{ $row['member']->name }}</td>
+                    <td class="fw-semibold text-center" style="font-size: 1rem; letter-spacing: 1px;">{{ $row['initials'] }}</td>
+                    <td>
+                        @if(isset($row['registration_fee']) && $row['registration_fee'] > 0)
+                            <span class="badge bg-warning text-dark fw-semibold">{{ number_format($row['registration_fee'], 2) }}</span>
                         @else
-                            <span class="badge bg-success">{{ number_format($row['deficit'], 2) }}</span>
+                            <span class="text-muted">-</span>
                         @endif
                     </td>
-                    <td class="text-center">
-                        @if($row['aging'] > 3)
-                            <span class="badge bg-danger">{{ $row['aging'] }}</span>
-                        @elseif($row['aging'] > 0)
-                            <span class="badge bg-warning text-dark">{{ $row['aging'] }}</span>
+                    @if($year == 2024)
+                        {{-- For 2024, only show July-December --}}
+                        <td class="month-cell">{{ ($row['months']['jul'] ?? 0) > 0 ? number_format($row['months']['jul'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['aug'] ?? 0) > 0 ? number_format($row['months']['aug'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['sep'] ?? 0) > 0 ? number_format($row['months']['sep'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['oct'] ?? 0) > 0 ? number_format($row['months']['oct'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['nov'] ?? 0) > 0 ? number_format($row['months']['nov'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['dec'] ?? 0) > 0 ? number_format($row['months']['dec'], 2) : '-' }}</td>
+                    @else
+                        {{-- For other years, show all 12 months --}}
+                        <td class="month-cell">{{ ($row['months']['jan'] ?? 0) > 0 ? number_format($row['months']['jan'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['feb'] ?? 0) > 0 ? number_format($row['months']['feb'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['mar'] ?? 0) > 0 ? number_format($row['months']['mar'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['apr'] ?? 0) > 0 ? number_format($row['months']['apr'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['may'] ?? 0) > 0 ? number_format($row['months']['may'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['jun'] ?? 0) > 0 ? number_format($row['months']['jun'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['jul'] ?? 0) > 0 ? number_format($row['months']['jul'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['aug'] ?? 0) > 0 ? number_format($row['months']['aug'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['sep'] ?? 0) > 0 ? number_format($row['months']['sep'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['oct'] ?? 0) > 0 ? number_format($row['months']['oct'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['nov'] ?? 0) > 0 ? number_format($row['months']['nov'], 2) : '-' }}</td>
+                        <td class="month-cell">{{ ($row['months']['dec'] ?? 0) > 0 ? number_format($row['months']['dec'], 2) : '-' }}</td>
+                    @endif
+                    <td>
+                        @if($row['deficit'] > 0)
+                            <span class="badge bg-danger fw-semibold">{{ number_format($row['deficit'], 2) }}</span>
                         @else
-                            <span class="badge bg-success">{{ $row['aging'] }}</span>
+                            <span class="badge bg-success fw-semibold">{{ number_format($row['deficit'], 2) }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($row['aging'] > 3)
+                            <span class="badge bg-danger fw-semibold">{{ $row['aging'] }}</span>
+                        @elseif($row['aging'] > 0)
+                            <span class="badge bg-warning text-dark fw-semibold">{{ $row['aging'] }}</span>
+                        @else
+                            <span class="badge bg-success fw-semibold">{{ $row['aging'] }}</span>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="18" class="text-center py-5">
+                    <td colspan="19" class="text-center py-5">
                         <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
                         <p class="text-muted">No members or contributions found for {{ $year }}.</p>
                     </td>
