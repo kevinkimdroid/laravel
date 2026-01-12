@@ -104,16 +104,14 @@
 </div>
 
 @if(($outstanding ?? 0) > 0 && $member->phone)
-<div class="alert alert-warning alert-dismissible fade show shadow-sm mb-4" role="alert">
+<div class="alert alert-info alert-dismissible fade show shadow-sm mb-4" role="alert">
     <div class="d-flex align-items-center">
-        <i class="bi bi-whatsapp me-3" style="font-size: 2rem; color: #25D366;"></i>
+        <i class="bi bi-info-circle me-3" style="font-size: 2rem;"></i>
         <div class="flex-grow-1">
             <h5 class="alert-heading mb-1">Send WhatsApp Reminder</h5>
-            <p class="mb-2">This member has an outstanding balance. Send them a reminder via WhatsApp.</p>
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $member->phone) }}?text={{ urlencode('Hello ' . $member->name . ', this is a reminder that you have an outstanding balance of KES ' . number_format($outstanding, 2) . ' for your monthly contributions. Please make a payment at your earliest convenience. Thank you!') }}" 
-               target="_blank" 
-               class="btn btn-success">
-                <i class="bi bi-whatsapp me-1"></i>Send WhatsApp Reminder
+            <p class="mb-2">This member has an outstanding balance. Use the WhatsApp Reminders page to send reminders to this member or all members with outstanding balances.</p>
+            <a href="{{ route('whatsapp.index') }}" class="btn btn-success" style="background-color: #25D366; border-color: #25D366;">
+                <i class="bi bi-whatsapp me-1"></i>Go to WhatsApp Reminders
             </a>
         </div>
     </div>

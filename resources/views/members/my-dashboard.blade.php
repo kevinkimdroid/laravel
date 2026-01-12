@@ -3,19 +3,26 @@
 @section('title', 'My Dashboard')
 
 @section('content')
-<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="card-body text-white">
+<!-- Hero Header -->
+<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #000000; border-bottom: 3px solid #D4AF37; border-radius: 16px; min-height: 180px;">
+    <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
+    <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(212, 175, 55, 0.08); border-radius: 50%;"></div>
+    <div class="card-body text-white p-5 position-relative" style="z-index: 1;">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <h2 class="mb-2 fw-bold text-white">
-                    <i class="bi bi-person-circle me-2"></i>Welcome, {{ $member->name }}!
+                <h2 class="mb-3 fw-bold text-white" style="font-size: 1.75rem;">
+                    <i class="bi bi-person-circle me-2" style="color: #D4AF37;"></i>Welcome, {{ $member->name }}!
                 </h2>
-                <p class="mb-0 text-white-50" style="font-size: 1.05rem;">
-                    Member No: <strong>{{ $member->member_no }}</strong> | 
-                    Status: <span class="badge bg-light text-dark">{{ $member->status }}</span>
-                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <span class="badge px-3 py-2" style="background: rgba(212, 175, 55, 0.2); color: #D4AF37; border: 1px solid #D4AF37;">
+                        <i class="bi bi-person-badge me-1"></i>Member No: {{ $member->member_no }}
+                    </span>
+                    <span class="badge px-3 py-2" style="background: {{ $member->status === 'ACTIVE' ? '#D4AF37' : '#6c757d' }}; color: {{ $member->status === 'ACTIVE' ? '#000000' : '#FFFFFF' }};">
+                        <i class="bi bi-check-circle me-1"></i>{{ $member->status }}
+                    </span>
+                </div>
             </div>
-            <a href="{{ route('profile.edit') }}" class="btn btn-light mt-3 mt-md-0 shadow-sm">
+            <a href="{{ route('profile.edit') }}" class="btn mt-3 mt-md-0 shadow-sm" style="background: #D4AF37; color: #000000; border-radius: 10px;">
                 <i class="bi bi-gear me-1"></i>Edit Profile
             </a>
         </div>
@@ -23,14 +30,14 @@
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+    <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
         <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
 @if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
         <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -38,102 +45,154 @@
 
 <!-- Quick Stats Cards -->
 <div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #28a745 !important;">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-cash-stack text-success" style="font-size: 2rem;"></i>
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
+                        <i class="bi bi-cash-stack" style="font-size: 1.8rem; color: #D4AF37;"></i>
                     </div>
-                    <div>
-                        <h6 class="text-muted text-uppercase small mb-0">Total Paid</h6>
-                        <h4 class="fw-bold mb-0">KES {{ number_format($totalPaid, 0) }}</h4>
-                    </div>
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                        <i class="bi bi-check-circle"></i>
+                    </span>
                 </div>
+                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Total Paid</h6>
+                <h2 class="fw-bold mb-0" style="font-size: 1.7rem; color: #000000;">KES {{ number_format($totalPaid, 0) }}</h2>
+                <p class="text-muted small mb-0 mt-2">Your total contributions</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #dc3545 !important;">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 1.8rem; color: #D4AF37;"></i>
                     </div>
-                    <div>
-                        <h6 class="text-muted text-uppercase small mb-0">Outstanding</h6>
-                        <h4 class="fw-bold mb-0">KES {{ number_format($outstanding, 0) }}</h4>
-                    </div>
+                    @if($outstanding > 0)
+                    <span class="badge rounded-pill px-3 py-2" style="background: #D4AF37; color: #000000; font-size: 0.75rem;">
+                        <i class="bi bi-exclamation"></i>
+                    </span>
+                    @else
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                        <i class="bi bi-check-circle"></i>
+                    </span>
+                    @endif
                 </div>
+                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Outstanding</h6>
+                <h2 class="fw-bold mb-0" style="font-size: 1.7rem; color: #000000;">KES {{ number_format($outstanding, 0) }}</h2>
+                <p class="text-muted small mb-0 mt-2">Balance to be paid</p>
+                @if($outstanding > 0)
+                <a href="{{ route('member.contributions.pay.form') }}" class="btn btn-sm mt-2 w-100" style="background: #D4AF37; color: #000000; border-radius: 8px;">
+                    <i class="bi bi-credit-card me-1"></i>Pay Now
+                </a>
+                @endif
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-trophy text-warning" style="font-size: 2rem;"></i>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
+                        <i class="bi bi-trophy" style="font-size: 1.8rem; color: #D4AF37;"></i>
                     </div>
-                    <div>
-                        <h6 class="text-muted text-uppercase small mb-0">QPL Points</h6>
-                        <h4 class="fw-bold mb-0">{{ $qplStats['points'] }}</h4>
-                    </div>
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                        <i class="bi bi-star-fill"></i>
+                    </span>
                 </div>
+                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">QPL Points</h6>
+                <h2 class="fw-bold mb-0" style="font-size: 1.7rem; color: #D4AF37;">{{ $qplStats['points'] }}</h2>
+                <p class="text-muted small mb-0 mt-2">League ranking points</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-calendar-event text-info" style="font-size: 2rem;"></i>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
+                        <i class="bi bi-calendar-event" style="font-size: 1.8rem; color: #D4AF37;"></i>
                     </div>
-                    <div>
-                        <h6 class="text-muted text-uppercase small mb-0">Games Played</h6>
-                        <h4 class="fw-bold mb-0">{{ $qplStats['played'] }}</h4>
-                    </div>
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                        <i class="bi bi-controller"></i>
+                    </span>
                 </div>
+                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Games Played</h6>
+                <h2 class="fw-bold mb-0" style="font-size: 1.7rem; color: #000000;">{{ $qplStats['played'] }}</h2>
+                <p class="text-muted small mb-0 mt-2">Total QPL matches</p>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Progress Bar for Contributions -->
+@if($expectedTotal > 0)
+<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 fw-bold">Contribution Progress</h6>
+            <span class="badge px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37;">
+                {{ number_format(($totalPaid / $expectedTotal) * 100, 1) }}% Complete
+            </span>
+        </div>
+        <div class="progress" style="height: 12px; border-radius: 10px; background: rgba(212, 175, 55, 0.1);">
+            <div class="progress-bar" role="progressbar" 
+                 style="width: {{ ($totalPaid / $expectedTotal) * 100 }}%; background: linear-gradient(90deg, #D4AF37 0%, #f4d03f 100%); border-radius: 10px;"
+                 aria-valuenow="{{ ($totalPaid / $expectedTotal) * 100 }}" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mt-2">
+            <small class="text-muted">KES {{ number_format($totalPaid, 0) }} paid</small>
+            <small class="text-muted">KES {{ number_format($expectedTotal, 0) }} expected</small>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Tabs Navigation -->
-<ul class="nav nav-tabs mb-4" id="memberTabs" role="tablist">
+<ul class="nav nav-tabs mb-4" id="memberTabs" role="tablist" style="border-bottom: 2px solid #D4AF37;">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" style="border-radius: 10px 10px 0 0; border: none;">
             <i class="bi bi-info-circle me-1"></i>Overview
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="contributions-tab" data-bs-toggle="tab" data-bs-target="#contributions" type="button" role="tab">
+        <button class="nav-link" id="contributions-tab" data-bs-toggle="tab" data-bs-target="#contributions" type="button" role="tab" style="border-radius: 10px 10px 0 0; border: none;">
             <i class="bi bi-cash-stack me-1"></i>Contributions
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="qpl-tab" data-bs-toggle="tab" data-bs-target="#qpl" type="button" role="tab">
+        <button class="nav-link" id="qpl-tab" data-bs-toggle="tab" data-bs-target="#qpl" type="button" role="tab" style="border-radius: 10px 10px 0 0; border: none;">
             <i class="bi bi-trophy me-1"></i>QPL Games
             @if($qplStats['played'] > 0)
-                <span class="badge bg-warning text-dark ms-1">{{ $qplStats['played'] }}</span>
+                <span class="badge rounded-pill ms-1" style="background: #D4AF37; color: #000000;">{{ $qplStats['played'] }}</span>
             @endif
         </button>
     </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" type="button" role="tab">
-                <i class="bi bi-calendar-event me-1"></i>Calendar
-                @if($upcomingActivities->count() > 0)
-                    <span class="badge bg-info ms-1">{{ $upcomingActivities->count() }}</span>
-                @endif
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="qpl-standings-tab" data-bs-toggle="tab" data-bs-target="#qpl-standings" type="button" role="tab">
-                <i class="bi bi-trophy me-1"></i>QPL Standings
-            </button>
-        </li>
-    </ul>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" type="button" role="tab" style="border-radius: 10px 10px 0 0; border: none;">
+            <i class="bi bi-calendar-event me-1"></i>Calendar
+            @if($upcomingActivities->count() > 0)
+                <span class="badge rounded-pill ms-1" style="background: #D4AF37; color: #000000;">{{ $upcomingActivities->count() }}</span>
+            @endif
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="qpl-standings-tab" data-bs-toggle="tab" data-bs-target="#qpl-standings" type="button" role="tab" style="border-radius: 10px 10px 0 0; border: none;">
+            <i class="bi bi-trophy me-1"></i>QPL Standings
+        </button>
+    </li>
+</ul>
 
 <!-- Tab Content -->
 <div class="tab-content" id="memberTabsContent">
@@ -141,10 +200,10 @@
     <div class="tab-pane fade show active" id="overview" role="tabpanel">
         <div class="row g-4">
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
+                <div class="card border-0 shadow-lg" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+                    <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%); border-radius: 16px 16px 0 0;">
                         <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-person me-2 text-primary"></i>Personal Information
+                            <i class="bi bi-person me-2" style="color: #D4AF37;"></i>Personal Information
                         </h5>
                     </div>
                     <div class="card-body">
@@ -168,7 +227,7 @@
                             <tr>
                                 <td class="text-muted">Status:</td>
                                 <td>
-                                    <span class="badge bg-{{ $member->status === 'ACTIVE' ? 'success' : 'secondary' }}">
+                                    <span class="badge" style="background: {{ $member->status === 'ACTIVE' ? '#D4AF37' : '#6c757d' }}; color: {{ $member->status === 'ACTIVE' ? '#000000' : '#FFFFFF' }};">
                                         {{ $member->status }}
                                     </span>
                                 </td>
@@ -177,11 +236,11 @@
                                 <td class="text-muted">Registration:</td>
                                 <td>
                                     @if($isRegistered)
-                                        <span class="badge bg-success">
+                                        <span class="badge" style="background: #D4AF37; color: #000000;">
                                             <i class="bi bi-check-circle me-1"></i>Registered (KES {{ number_format($registrationFeePaid, 0) }})
                                         </span>
                                     @else
-                                        <span class="badge bg-warning text-dark">
+                                        <span class="badge" style="background: #6c757d; color: #FFFFFF;">
                                             <i class="bi bi-exclamation-triangle me-1"></i>Not Registered
                                         </span>
                                     @endif
@@ -192,21 +251,21 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+                <div class="card border-0 shadow-lg" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+                    <div class="card-header border-0 py-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
                         <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-cash-stack me-2 text-success"></i>Contribution Summary
+                            <i class="bi bi-cash-stack me-2" style="color: #D4AF37;"></i>Contribution Summary
                         </h5>
                     </div>
                     <div class="card-body">
                         <table class="table table-borderless mb-0">
                             <tr>
                                 <td class="text-muted" style="width: 50%;">Total Paid:</td>
-                                <td class="fw-bold text-success">KES {{ number_format($totalPaid, 2) }}</td>
+                                <td class="fw-bold" style="color: #000000;">KES {{ number_format($totalPaid, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-muted">Outstanding Balance:</td>
-                                <td class="fw-bold {{ $outstanding > 0 ? 'text-danger' : 'text-success' }}">
+                                <td class="fw-bold" style="color: #000000;">
                                     KES {{ number_format($outstanding, 2) }}
                                 </td>
                             </tr>
@@ -220,8 +279,8 @@
                             </tr>
                         </table>
                         @if($outstanding > 0)
-                            <div class="mt-3">
-                                <a href="{{ route('member.contributions.pay.form') }}" class="btn btn-primary w-100">
+                            <div class="mt-4">
+                                <a href="{{ route('member.contributions.pay.form') }}" class="btn w-100" style="background: #000000; color: #FFFFFF; border: 2px solid #D4AF37; border-radius: 10px;">
                                     <i class="bi bi-credit-card me-1"></i>Make Payment
                                 </a>
                             </div>
@@ -234,24 +293,24 @@
 
     <!-- Contributions Tab -->
     <div class="tab-pane fade" id="contributions" role="tabpanel">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+        <div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+            <div class="card-header border-0 py-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-cash-stack me-2 text-success"></i>My Contributions
+                        <i class="bi bi-cash-stack me-2" style="color: #D4AF37;"></i>My Contributions
                     </h5>
-                    <a href="{{ route('member.contributions.pay.form') }}" class="btn btn-success btn-sm">
+                    <a href="{{ route('member.contributions.pay.form') }}" class="btn btn-sm" style="background: #D4AF37; color: #000000; border-radius: 10px;">
                         <i class="bi bi-plus-circle me-1"></i>Make Payment
                     </a>
                 </div>
             </div>
             <div class="card-body">
-                <a href="{{ route('member.contributions') }}" class="btn btn-outline-primary mb-3">
+                <a href="{{ route('member.contributions') }}" class="btn mb-3" style="background: #000000; color: #FFFFFF; border: 1px solid #D4AF37; border-radius: 10px;">
                     <i class="bi bi-arrow-right me-1"></i>View Full Contribution History
                 </a>
                 @if($pendingPayments && $pendingPayments->count() > 0)
-                    <div class="alert alert-warning">
-                        <h6 class="fw-bold"><i class="bi bi-hourglass-split me-2"></i>Pending Payment Requests ({{ $pendingPayments->count() }})</h6>
+                    <div class="alert border-0" style="background: rgba(212, 175, 55, 0.1); border-radius: 12px;">
+                        <h6 class="fw-bold"><i class="bi bi-hourglass-split me-2" style="color: #D4AF37;"></i>Pending Payment Requests ({{ $pendingPayments->count() }})</h6>
                         <p class="mb-0 small">You have {{ $pendingPayments->count() }} payment request(s) awaiting admin approval.</p>
                     </div>
                 @endif
@@ -261,58 +320,58 @@
 
     <!-- QPL Games Tab -->
     <div class="tab-pane fade" id="qpl" role="tabpanel">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
+        <div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+            <div class="card-header border-0 py-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
                 <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-trophy me-2 text-warning"></i>QBASH Pool League Statistics
+                    <i class="bi bi-trophy me-2" style="color: #D4AF37;"></i>QBASH Pool League Statistics
                 </h5>
             </div>
             <div class="card-body">
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
-                        <div class="text-center p-3 border rounded">
-                            <h3 class="fw-bold text-primary mb-1">{{ $qplStats['played'] }}</h3>
-                            <small class="text-muted">Games Played</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h3 class="fw-bold mb-2" style="font-size: 2rem; color: #000000;">{{ $qplStats['played'] }}</h3>
+                            <small class="text-muted fw-semibold">Games Played</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center p-3 border rounded">
-                            <h3 class="fw-bold text-success mb-1">{{ $qplStats['won'] }}</h3>
-                            <small class="text-muted">Wins</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h3 class="fw-bold mb-2" style="font-size: 2rem; color: #D4AF37;">{{ $qplStats['won'] }}</h3>
+                            <small class="text-muted fw-semibold">Wins</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center p-3 border rounded">
-                            <h3 class="fw-bold text-info mb-1">{{ $qplStats['drawn'] }}</h3>
-                            <small class="text-muted">Draws</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h3 class="fw-bold mb-2" style="font-size: 2rem; color: #000000;">{{ $qplStats['drawn'] }}</h3>
+                            <small class="text-muted fw-semibold">Draws</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="text-center p-3 border rounded">
-                            <h3 class="fw-bold text-danger mb-1">{{ $qplStats['lost'] }}</h3>
-                            <small class="text-muted">Losses</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h3 class="fw-bold mb-2" style="font-size: 2rem; color: #000000;">{{ $qplStats['lost'] }}</h3>
+                            <small class="text-muted fw-semibold">Losses</small>
                         </div>
                     </div>
                 </div>
-                <div class="row g-3 mb-4">
+                <div class="row g-3">
                     <div class="col-md-4">
-                        <div class="text-center p-3 border rounded">
-                            <h4 class="fw-bold text-primary mb-1">{{ $qplStats['goals_for'] }}</h4>
-                            <small class="text-muted">Goals For</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h4 class="fw-bold mb-2" style="font-size: 1.75rem; color: #000000;">{{ $qplStats['goals_for'] }}</h4>
+                            <small class="text-muted fw-semibold">Goals For</small>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="text-center p-3 border rounded">
-                            <h4 class="fw-bold text-danger mb-1">{{ $qplStats['goals_against'] }}</h4>
-                            <small class="text-muted">Goals Against</small>
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h4 class="fw-bold mb-2" style="font-size: 1.75rem; color: #000000;">{{ $qplStats['goals_against'] }}</h4>
+                            <small class="text-muted fw-semibold">Goals Against</small>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="text-center p-3 border rounded">
-                            <h4 class="fw-bold {{ ($qplStats['goals_for'] - $qplStats['goals_against']) >= 0 ? 'text-success' : 'text-danger' }} mb-1">
+                        <div class="text-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
+                            <h4 class="fw-bold mb-2" style="font-size: 1.75rem; color: #000000;">
                                 {{ ($qplStats['goals_for'] - $qplStats['goals_against']) >= 0 ? '+' : '' }}{{ $qplStats['goals_for'] - $qplStats['goals_against'] }}
                             </h4>
-                            <small class="text-muted">Goal Difference</small>
+                            <small class="text-muted fw-semibold">Goal Difference</small>
                         </div>
                     </div>
                 </div>
@@ -320,22 +379,22 @@
         </div>
 
         @if($qplGames && $qplGames->count() > 0)
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
+        <div class="card border-0 shadow-lg" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+            <div class="card-header border-0 py-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
                 <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-list-ul me-2 text-warning"></i>My QPL Games
+                    <i class="bi bi-list-ul me-2" style="color: #D4AF37;"></i>My QPL Games
                 </h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white;">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead style="background: #000000; border-bottom: 3px solid #D4AF37; color: white;">
                             <tr>
-                                <th class="text-white">Date</th>
-                                <th class="text-white">Opponent</th>
-                                <th class="text-white text-center">Score</th>
-                                <th class="text-white text-center">Result</th>
-                                <th class="text-white">Venue</th>
+                                <th class="text-white px-4" style="font-weight: 600;">Date</th>
+                                <th class="text-white px-4" style="font-weight: 600;">Opponent</th>
+                                <th class="text-white text-center px-4" style="font-weight: 600;">Score</th>
+                                <th class="text-white text-center px-4" style="font-weight: 600;">Result</th>
+                                <th class="text-white px-4" style="font-weight: 600;">Venue</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -374,20 +433,20 @@
                                 @endphp
                                 @if($isPlayed)
                                     <tr>
-                                        <td>
+                                        <td class="px-4">
                                             <i class="bi bi-calendar3 me-1 text-muted"></i>
                                             {{ $game->game_date->format('M d, Y') }}
                                         </td>
-                                        <td class="fw-semibold">{{ $opponent }}</td>
-                                        <td class="text-center">
-                                            <span class="badge bg-primary fs-6 px-3 py-2">
+                                        <td class="px-4 fw-semibold">{{ $opponent }}</td>
+                                        <td class="text-center px-4">
+                                            <span class="badge px-3 py-2" style="background: #000000; color: #FFFFFF; border: 2px solid #D4AF37; font-size: 1rem; border-radius: 8px;">
                                                 {{ $myScore }} - {{ $opponentScore }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-{{ $resultClass }} fs-6">{{ $result }}</span>
+                                        <td class="text-center px-4">
+                                            <span class="badge px-3 py-2" style="background: #D4AF37; color: #000000; font-size: 1rem; border-radius: 8px;">{{ $result }}</span>
                                         </td>
-                                        <td>
+                                        <td class="px-4">
                                             @if($game->venue)
                                                 <i class="bi bi-geo-alt me-1 text-muted"></i>{{ $game->venue }}
                                             @else
@@ -403,10 +462,10 @@
             </div>
         </div>
         @else
-        <div class="card border-0 shadow-sm">
+        <div class="card border-0 shadow-lg" style="border-radius: 16px;">
             <div class="card-body text-center py-5">
                 <i class="bi bi-trophy display-4 text-muted d-block mb-3"></i>
-                <h5 class="mb-2">No QPL Games Yet</h5>
+                <h5 class="mb-2 fw-bold">No QPL Games Yet</h5>
                 <p class="text-muted">Your game results will appear here once games are recorded.</p>
             </div>
         </div>
@@ -420,26 +479,51 @@
 
     <!-- QPL Standings Tab -->
     <div class="tab-pane fade" id="qpl-standings" role="tabpanel">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-warning bg-opacity-10 border-0 py-3">
-                <h5 class="mb-0 fw-bold text-warning">
-                    <i class="bi bi-trophy me-2"></i>QBASH Pool League Standings
+        <div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
+            <div class="card-header border-0 py-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
+                <h5 class="mb-0 fw-bold" style="color: #000000;">
+                    <i class="bi bi-trophy me-2" style="color: #D4AF37;"></i>QBASH Pool League Standings
                 </h5>
             </div>
             <div class="card-body">
-                <p class="text-muted mb-3">View the complete QBASH Pool League standings, game results, and rankings.</p>
+                <p class="text-muted mb-4">View the complete QBASH Pool League standings, game results, and rankings.</p>
                 <div class="d-grid gap-2 d-md-block">
-                    <a href="{{ route('member.qpl.standings') }}" class="btn btn-warning btn-lg">
+                    <a href="{{ route('member.qpl.standings') }}" class="btn btn-lg" style="background: #D4AF37; color: #000000; border-radius: 10px;">
                         <i class="bi bi-trophy me-1"></i>View Full Standings
                     </a>
                 </div>
-                <div class="alert alert-info mt-3">
-                    <i class="bi bi-info-circle me-2"></i>
+                <div class="alert mt-4 border-0" style="background: rgba(212, 175, 55, 0.1); border-radius: 12px;">
+                    <i class="bi bi-info-circle me-2" style="color: #D4AF37;"></i>
                     <strong>Note:</strong> Click the button above to view the complete league standings, recent games, and individual player statistics.
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border: none;
+        color: #D4AF37;
+        background: rgba(212, 175, 55, 0.1);
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: #D4AF37;
+        color: #000000;
+        border: none;
+        font-weight: 600;
+    }
+</style>
+@endsection

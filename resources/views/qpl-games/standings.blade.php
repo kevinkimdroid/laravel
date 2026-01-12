@@ -34,78 +34,97 @@
     </div>
 </div>
 
-@if($recentGames->count() > 0)
-<!-- Recently Played Games Section -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-info bg-opacity-10 border-0 py-3">
-        <h4 class="mb-0 fw-bold text-info">
-            <i class="bi bi-clock-history me-2"></i>Recently Played Games
-        </h4>
-        <p class="mb-0 mt-2 text-muted small">Most recently updated games for easy navigation</p>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="table-light" style="background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%); color: white;">
-                    <tr>
-                        <th class="text-white" style="font-weight: 600;">Date</th>
-                        <th class="text-white" style="font-weight: 600;">Member A</th>
-                        <th class="text-white text-center" style="font-weight: 600;">Score</th>
-                        <th class="text-white" style="font-weight: 600;">Member B</th>
-                        <th class="text-white" style="font-weight: 600;">Venue</th>
-                        <th class="text-white text-center" style="font-weight: 600;">Updated</th>
-                        <th class="text-white text-center" style="font-weight: 600;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($recentGames as $game)
-                        <tr>
-                            <td>
-                                <i class="bi bi-calendar3 me-1 text-muted"></i>
-                                <span class="fw-semibold">{{ $game->game_date->format('M d, Y') }}</span>
-                            </td>
-                            <td class="fw-semibold">{{ $game->home_team }}</td>
-                            <td class="text-center">
-                                <span class="badge bg-primary fs-6 px-3 py-2 fw-bold">
-                                    {{ $game->home_score }} - {{ $game->away_score }}
-                                </span>
-                            </td>
-                            <td class="fw-semibold">{{ $game->away_team }}</td>
-                            <td>
-                                @if($game->venue)
-                                    <i class="bi bi-geo-alt me-1 text-muted"></i>{{ $game->venue }}
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                <small class="text-muted">
-                                    <i class="bi bi-clock me-1"></i>
-                                    {{ $game->updated_at->diffForHumans() }}
-                                </small>
-                            </td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('qpl-games.edit', $game->id) }}" class="btn btn-sm btn-warning" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+<!-- League Statistics -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #ffc107 !important;">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-controller text-warning" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">Games Played</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalGames ?? 0 }}</h4>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-footer bg-light border-0 py-2 text-center">
-            <a href="{{ route('qpl-games.index') }}" class="text-decoration-none small text-primary">
-                <i class="bi bi-arrow-right me-1"></i>View All Games
-            </a>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #28a745 !important;">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-trophy text-success" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">Total Goals</h6>
+                        <h4 class="fw-bold mb-0 text-success">{{ $totalGoals ?? 0 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0dcaf0 !important;">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-graph-up text-info" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">Avg Goals/Game</h6>
+                        <h4 class="fw-bold mb-0 text-info">{{ $averageGoalsPerGame ?? 0 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #667eea !important;">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase small mb-0">Active Players</h6>
+                        <h4 class="fw-bold mb-0 text-primary">{{ $playedStandings->count() }}</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-@endif
 
-@if($playedStandings->count() > 0)
+<!-- Tabs Navigation for Standings -->
+<ul class="nav nav-tabs mb-4" id="standingsTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="standings-tab" data-bs-toggle="tab" data-bs-target="#standings" type="button" role="tab" aria-controls="standings" aria-selected="true">
+            <i class="bi bi-table me-1"></i>Standings
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="recent-games-tab" data-bs-toggle="tab" data-bs-target="#recent-games" type="button" role="tab" aria-controls="recent-games" aria-selected="false">
+            <i class="bi bi-clock-history me-1"></i>Recent Games
+            @if($recentGames->count() > 0)
+                <span class="badge bg-info ms-1">{{ $recentGames->count() }}</span>
+            @endif
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="game-history-tab" data-bs-toggle="tab" data-bs-target="#game-history" type="button" role="tab" aria-controls="game-history" aria-selected="false">
+            <i class="bi bi-list-check me-1"></i>Game History
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="standingsTabsContent">
+    <!-- Standings Tab -->
+    <div class="tab-pane fade show active" id="standings" role="tabpanel" aria-labelledby="standings-tab">
+        @if($playedStandings->count() > 0)
 <!-- Members Who Have Played -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-success bg-opacity-10 border-0 py-3">
@@ -156,6 +175,32 @@
                                     <i class="bi bi-star-fill text-warning me-1"></i>
                                 @endif
                                 {{ $row['name'] }}
+                            </td>
+                            <td class="text-center">
+                                @php
+                                    $form = $formGuides[$row['name']] ?? [];
+                                    $formDisplay = array_slice($form, 0, 5);
+                                @endphp
+                                @if(count($formDisplay) > 0)
+                                    <div class="d-flex justify-content-center gap-1">
+                                        @foreach($formDisplay as $result)
+                                            @if($result === 'W')
+                                                <span class="badge bg-success" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem;">W</span>
+                                            @elseif($result === 'L')
+                                                <span class="badge bg-danger" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem;">L</span>
+                                            @else
+                                                <span class="badge bg-info" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem;">D</span>
+                                            @endif
+                                        @endforeach
+                                        @if(count($form) < 5)
+                                            @for($i = count($form); $i < 5; $i++)
+                                                <span class="badge bg-secondary" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem;">-</span>
+                                            @endfor
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-muted small">No form</span>
+                                @endif
                             </td>
                             <td class="text-center">{{ $row['played'] }}</td>
                             <td class="text-center text-success fw-semibold">{{ $row['won'] }}</td>
@@ -244,9 +289,7 @@
 </div>
 @endif
 
-@if(isset($memberGameHistory) && count($memberGameHistory) > 0)
-<!-- Individual Member Game History -->
-<div class="card border-0 shadow-sm mt-4">
+        <div class="card border-0 shadow-sm">
     <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
         <h4 class="mb-0 fw-bold text-primary">
             <i class="bi bi-list-check me-2"></i>Individual Game Results & Scores
@@ -334,5 +377,15 @@
         </div>
     </div>
 </div>
+@else
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-list-check display-4 text-muted d-block mb-3"></i>
+                <h5 class="mb-2">No Game History</h5>
+                <p class="text-muted">No game history available yet.</p>
+            </div>
+        </div>
 @endif
+    </div>
+</div>
 @endsection

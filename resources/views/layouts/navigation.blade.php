@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 60px; position: sticky; top: 0; z-index: 1030;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: #000000; border-bottom: 3px solid #D4AF37; min-height: 60px; position: sticky; top: 0; z-index: 1030; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
     <div class="container-fluid px-4">
         <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('dashboard') }}" style="font-size: 1.5rem;">
             <span>{{ config('app.name', 'QBASH') }}</span>
@@ -80,7 +80,7 @@
                             <i class="bi bi-person-circle me-2" style="font-size: 1.2rem;"></i>
                             <span>{{ auth()->user()->name }}</span>
                             @if(auth()->user()->role === 'admin')
-                                <span class="badge bg-warning text-dark ms-2">Admin</span>
+                                <span class="badge ms-2" style="background: #D4AF37; color: #000000;">Admin</span>
                             @endif
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
@@ -103,7 +103,7 @@
                     <li class="nav-item d-flex align-items-center">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-outline-light btn-sm px-3" style="white-space: nowrap;">
+                            <button type="submit" class="btn btn-sm px-3" style="white-space: nowrap; background: #D4AF37; color: #000000; border: 2px solid #D4AF37;">
                                 <i class="bi bi-box-arrow-right me-1"></i>Logout
                             </button>
                         </form>

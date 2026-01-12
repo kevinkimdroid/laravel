@@ -727,4 +727,246 @@ public function statement(Member $member)
 
         return Response::stream($callback, 200, $headers);
     }
+
+    /**
+     * Show the form for updating phone numbers from Excel.
+     */
+    public function showPhoneUpdateForm()
+    {
+        return view('members.update-phone');
+    }
+
+    /**
+     * Update phone numbers from Excel/CSV file.
+     */
+    public function updatePhones(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt,xlsx,xls|max:10240',
+        ]);
+
+        try {
+            $updatedCount = 0;
+            $notFoundCount = 0;
+            $errors = [];
+            $file = $request->file('file');
+            $extension = strtolower($file->getClientOriginalExtension());
+            
+            // Handle CSV files
+            if ($extension === 'csv' || $extension === 'txt') {
+                $handle = fopen($file->getRealPath(), 'r');
+                if ($handle === false) {
+                    throw new \Exception('Could not open file');
+                }
+                
+                // Read header row
+                $headers = fgetcsv($handle);
+                if ($headers === false) {
+                    fclose($handle);
+                    throw new \Exception('File is empty or invalid');
+                }
+                
+                // Remove BOM if present
+                if (!empty($headers[0]) && substr($headers[0], 0, 3) === "\xEF\xBB\xBF") {
+                    $headers[0] = substr($headers[0], 3);
+                }
+                
+                // Normalize headers
+                $normalizedHeaders = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-z0-9_]/', '_', $h)));
+                }, $headers);
+                
+                // Find column indices
+                $memberNoIndex = $this->findColumnIndex($normalizedHeaders, ['member_no', 'memberno', 'member_number', 'membernumber', 'member_id', 'memberid']);
+                $phoneIndex = $this->findColumnIndex($normalizedHeaders, ['phone', 'phone_number', 'phonenumber', 'mobile', 'mobile_number', 'tel', 'telephone']);
+                
+                if ($memberNoIndex === false) {
+                    fclose($handle);
+                    throw new \Exception('Could not find member number column. Please ensure your file has a column named: member_no, member_no, member_number, or member_id');
+                }
+                
+                if ($phoneIndex === false) {
+                    fclose($handle);
+                    throw new \Exception('Could not find phone number column. Please ensure your file has a column named: phone, phone_number, mobile, or telephone');
+                }
+                
+                $lineNumber = 1;
+                while (($row = fgetcsv($handle)) !== false) {
+                    $lineNumber++;
+                    
+                    if (count($row) < count($headers)) {
+                        continue; // Skip incomplete rows
+                    }
+                    
+                    try {
+                        $memberNo = trim($row[$memberNoIndex] ?? '');
+                        $phone = trim($row[$phoneIndex] ?? '');
+                        
+                        if (empty($memberNo)) {
+                            $errors[] = "Line {$lineNumber}: Member number is empty";
+                            continue;
+                        }
+                        
+                        if (empty($phone)) {
+                            $errors[] = "Line {$lineNumber}: Phone number is empty for member {$memberNo}";
+                            continue;
+                        }
+                        
+                        // Find member by member_no
+                        $member = Member::where('member_no', $memberNo)->first();
+                        
+                        if (!$member) {
+                            $notFoundCount++;
+                            $errors[] = "Line {$lineNumber}: Member with number '{$memberNo}' not found";
+                            continue;
+                        }
+                        
+                        // Update phone number
+                        $member->phone = $phone;
+                        $member->save();
+                        
+                        // Update user account if exists
+                        $user = User::where('member_id', $member->id)->first();
+                        if ($user) {
+                            $user->phone = $phone;
+                            $user->save();
+                        }
+                        
+                        $updatedCount++;
+                    } catch (\Exception $e) {
+                        $errors[] = "Line {$lineNumber}: " . $e->getMessage();
+                    }
+                }
+                
+                fclose($handle);
+            } else {
+                // For Excel files, try to use PhpSpreadsheet if available
+                if (class_exists(\PhpOffice\PhpSpreadsheet\IOFactory::class)) {
+                    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getRealPath());
+                    $worksheet = $spreadsheet->getActiveSheet();
+                    $rows = $worksheet->toArray();
+                    
+                    if (empty($rows)) {
+                        throw new \Exception('File is empty or invalid');
+                    }
+                    
+                    // Get headers from first row
+                    $headers = array_map(function($h) {
+                        return strtolower(trim(preg_replace('/[^a-z0-9_]/', '_', $h ?? '')));
+                    }, $rows[0]);
+                    
+                    // Find column indices
+                    $memberNoIndex = $this->findColumnIndex($headers, ['member_no', 'memberno', 'member_number', 'membernumber', 'member_id', 'memberid']);
+                    $phoneIndex = $this->findColumnIndex($headers, ['phone', 'phone_number', 'phonenumber', 'mobile', 'mobile_number', 'tel', 'telephone']);
+                    
+                    if ($memberNoIndex === false) {
+                        throw new \Exception('Could not find member number column. Please ensure your file has a column named: member_no, member_number, or member_id');
+                    }
+                    
+                    if ($phoneIndex === false) {
+                        throw new \Exception('Could not find phone number column. Please ensure your file has a column named: phone, phone_number, mobile, or telephone');
+                    }
+                    
+                    // Process rows
+                    for ($i = 1; $i < count($rows); $i++) {
+                        $row = $rows[$i];
+                        $lineNumber = $i + 1;
+                        
+                        try {
+                            $memberNo = trim($row[$memberNoIndex] ?? '');
+                            $phone = trim($row[$phoneIndex] ?? '');
+                            
+                            if (empty($memberNo)) {
+                                $errors[] = "Line {$lineNumber}: Member number is empty";
+                                continue;
+                            }
+                            
+                            if (empty($phone)) {
+                                $errors[] = "Line {$lineNumber}: Phone number is empty for member {$memberNo}";
+                                continue;
+                            }
+                            
+                            // Find member by member_no
+                            $member = Member::where('member_no', $memberNo)->first();
+                            
+                            if (!$member) {
+                                $notFoundCount++;
+                                $errors[] = "Line {$lineNumber}: Member with number '{$memberNo}' not found";
+                                continue;
+                            }
+                            
+                            // Update phone number
+                            $member->phone = $phone;
+                            $member->save();
+                            
+                            // Update user account if exists
+                            $user = User::where('member_id', $member->id)->first();
+                            if ($user) {
+                                $user->phone = $phone;
+                                $user->save();
+                            }
+                            
+                            $updatedCount++;
+                        } catch (\Exception $e) {
+                            $errors[] = "Line {$lineNumber}: " . $e->getMessage();
+                        }
+                    }
+                } else {
+                    // Excel files not supported without PhpSpreadsheet
+                    throw new \Exception('Excel files (.xlsx, .xls) require PhpSpreadsheet library. Please convert your file to CSV format. You can open your Excel file and use "Save As" to save it as CSV.');
+                }
+            }
+
+            $message = "Successfully updated {$updatedCount} phone number(s)";
+            if ($notFoundCount > 0) {
+                $message .= ". {$notFoundCount} member(s) not found";
+            }
+            if (count($errors) > 0) {
+                return redirect()->route('members.update-phone')
+                    ->with('warning', $message)
+                    ->with('update_errors', $errors);
+            }
+
+            return redirect()->route('members.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->route('members.update-phone')
+                ->with('error', 'Error processing file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download template for phone number update.
+     */
+    public function downloadPhoneUpdateTemplate()
+    {
+        $filename = 'phone_update_template_' . date('Y-m-d') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header row
+            fputcsv($file, [
+                'member_no',
+                'phone'
+            ]);
+            
+            // Example rows
+            fputcsv($file, ['M001', '254712345678']);
+            fputcsv($file, ['M002', '254798765432']);
+            
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
 }

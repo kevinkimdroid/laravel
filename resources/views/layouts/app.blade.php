@@ -18,8 +18,53 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
+        :root {
+            --qbash-black: #000000;
+            --qbash-yellow: #D4AF37;
+            --qbash-white: #FFFFFF;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        /* Override Bootstrap primary colors */
+        .btn-primary {
+            background-color: var(--qbash-black) !important;
+            border-color: var(--qbash-yellow) !important;
+            color: var(--qbash-white) !important;
+        }
+        .btn-primary:hover {
+            background-color: var(--qbash-yellow) !important;
+            border-color: var(--qbash-yellow) !important;
+            color: var(--qbash-black) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--qbash-black) !important;
+        }
+        
+        .text-primary {
+            color: var(--qbash-yellow) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--qbash-yellow) !important;
+        }
+        
+        /* Outer yellow circle in logo */
+        .logo-outer-ring {
+            border-color: var(--qbash-yellow) !important;
+        }
+        
+        /* Inner yellow ring in logo */
+        .logo-inner-ring {
+            border-color: var(--qbash-yellow) !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: var(--qbash-black) !important;
+            color: var(--qbash-white) !important;
         }
         .navbar {
             position: sticky !important;
@@ -37,12 +82,13 @@
             transition: all 0.3s ease !important;
         }
         .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2) !important;
+            background-color: rgba(212, 175, 55, 0.2) !important;
             border-radius: 5px !important;
-            color: white !important;
+            color: #D4AF37 !important;
         }
         .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.3) !important;
+            background-color: #D4AF37 !important;
+            color: #000000 !important;
             border-radius: 5px !important;
             font-weight: 600 !important;
         }

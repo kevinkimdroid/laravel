@@ -127,6 +127,14 @@ Route::middleware('auth')->group(function () {
             ->name('members.import');
         Route::get('members-template', [MemberController::class, 'downloadTemplate'])
             ->name('members.template');
+        
+        // Phone number update routes
+        Route::get('members-update-phone', [MemberController::class, 'showPhoneUpdateForm'])
+            ->name('members.update-phone');
+        Route::post('members-update-phone', [MemberController::class, 'updatePhones'])
+            ->name('members.update-phones');
+        Route::get('members-phone-template', [MemberController::class, 'downloadPhoneUpdateTemplate'])
+            ->name('members.phone-template');
 
         // Admin manages contributions
         Route::resource('contributions', ContributionController::class);
