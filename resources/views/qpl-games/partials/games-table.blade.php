@@ -1,7 +1,21 @@
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-light">
         <h5 class="mb-0 fw-semibold">
-            <i class="bi bi-controller me-2"></i>{{ $title ?? 'Games' }}
+            <!-- Pool Table Icon -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+                <!-- Table outline -->
+                <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="currentColor"/>
+                <!-- Pockets -->
+                <circle cx="3" cy="6" r="1.5" fill="currentColor"/>
+                <circle cx="21" cy="6" r="1.5" fill="currentColor"/>
+                <circle cx="3" cy="18" r="1.5" fill="currentColor"/>
+                <circle cx="21" cy="18" r="1.5" fill="currentColor"/>
+                <!-- Center line -->
+                <line x1="12" y1="6" x2="12" y2="18" stroke="currentColor" stroke-width="0.8"/>
+                <!-- Pool balls -->
+                <circle cx="8" cy="12" r="1.2" fill="currentColor"/>
+                <circle cx="16" cy="12" r="1.2" fill="currentColor"/>
+            </svg>{{ $title ?? 'Games' }}
         </h5>
         @if(isset($description))
             <p class="mb-0 mt-1 text-muted small">{{ $description }}</p>
@@ -10,7 +24,7 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white;">
+                <thead class="table-light" style="background: linear-gradient(135deg, #D4AF37 0%, #c5a030 100%); color: white;">
                     <tr>
                         <th class="text-white">Date</th>
                         <th class="text-white">Member A</th>
@@ -37,24 +51,28 @@
                                 <i class="bi bi-calendar3 me-1 text-muted"></i>
                                 {{ $game->game_date->format('M d, Y') }}
                                 @if($isClose && $isHighScoring)
-                                    <i class="bi bi-star-fill text-warning ms-1" title="Exciting Game!"></i>
+                                    <i class="bi bi-star-fill ms-1" style="color: #D4AF37;" title="Exciting Game!"></i>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->home_team }}</td>
                             <td class="text-center">
                                 @php
                                     $badgeClass = 'bg-primary';
+                                    $badgeStyle = '';
                                     if ($isHighScoring) $badgeClass = 'bg-danger';
-                                    elseif ($isClose) $badgeClass = 'bg-warning text-dark';
+                                    elseif ($isClose) {
+                                        $badgeClass = '';
+                                        $badgeStyle = 'background: #D4AF37; color: #000000;';
+                                    }
                                 @endphp
-                                <span class="badge {{ $badgeClass }} fs-6 px-3 py-2 fw-bold">
+                                <span class="badge {{ $badgeClass }} fs-6 px-3 py-2 fw-bold" style="{{ $badgeStyle }}">
                                     {{ $game->home_score }} - {{ $game->away_score }}
                                 </span>
                                 @if($isClose)
-                                    <br><small class="text-danger fw-semibold"><i class="bi bi-lightning-charge"></i> Close!</small>
+                                    <br><small class="fw-semibold" style="color: #D4AF37;"><i class="bi bi-lightning-charge"></i> Close!</small>
                                 @endif
                                 @if($isHighScoring)
-                                    <br><small class="text-warning fw-semibold"><i class="bi bi-fire"></i> {{ $totalGoals }} Goals!</small>
+                                    <br><small class="fw-semibold" style="color: #D4AF37;"><i class="bi bi-fire"></i> {{ $totalGoals }} Goals!</small>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->away_team }}</td>

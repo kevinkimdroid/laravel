@@ -6,24 +6,24 @@
 <!-- Hero Header -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card border-0 shadow-lg text-white position-relative overflow-hidden" style="background: #000000; border-bottom: 3px solid #D4AF37; min-height: 180px;">
-            <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
-            <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(212, 175, 55, 0.08); border-radius: 50%;"></div>
+        <div class="card border-0 shadow-lg position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; min-height: 180px;">
+            <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255, 215, 0, 0.1); border-radius: 50%;"></div>
+            <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255, 215, 0, 0.08); border-radius: 50%;"></div>
             <div class="card-body p-5 position-relative" style="z-index: 1;">
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
                     <div>
-                        <h2 class="mb-3 fw-bold text-white" style="font-size: 1.75rem;">
-                            <i class="bi bi-shield-check me-2" style="color: #D4AF37;"></i>Admin Dashboard
+                        <h2 class="mb-3 fw-bold" style="font-size: 1.75rem; color: #000000;">
+                            <i class="bi bi-shield-check me-2" style="color: #FFD700;"></i>Admin Dashboard
                         </h2>
-                        <p class="mb-0 text-white-50" style="font-size: 1rem;">
+                        <p class="mb-0" style="font-size: 1rem; color: #666;">
                             Complete control center for managing QBASH Pool League operations
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
-                        <span class="badge px-3 py-2" style="background: rgba(212, 175, 55, 0.2); color: #D4AF37; border: 1px solid #D4AF37;">
+                        <span class="badge px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid #FFD700;">
                             <i class="bi bi-wifi me-1"></i>Online
                         </span>
-                        <span class="badge px-3 py-2" style="background: #D4AF37; color: #000000;">
+                        <span class="badge px-3 py-2" style="background: #FFD700; color: #000000;">
                             <i class="bi bi-shield-lock me-1"></i>Admin Access
                         </span>
                     </div>
@@ -51,13 +51,13 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
                 <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-people-fill" style="font-size: 1.8rem; color: #D4AF37;"></i>
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                        <i class="bi bi-people-fill" style="font-size: 1.8rem; color: #FFD700;"></i>
                     </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
                         <i class="bi bi-arrow-up"></i>
                     </span>
                 </div>
@@ -70,13 +70,13 @@
     
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
                 <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-person-check-fill" style="font-size: 1.8rem; color: #D4AF37;"></i>
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                        <i class="bi bi-person-check-fill" style="font-size: 1.8rem; color: #FFD700;"></i>
                     </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
                         <i class="bi bi-check-circle"></i>
                     </span>
                 </div>
@@ -89,24 +89,24 @@
     
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
                 <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-hourglass-split" style="font-size: 1.8rem; color: #D4AF37;"></i>
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                        <i class="bi bi-hourglass-split" style="font-size: 1.8rem; color: #FFD700;"></i>
                     </div>
                     @if($pendingApprovals > 0)
-                    <span class="badge rounded-pill px-3 py-2" style="background: #D4AF37; color: #000000; font-size: 0.75rem; animation: pulse 2s infinite;">
+                    <span class="badge rounded-pill px-3 py-2" style="background: #FFD700; color: #000000; font-size: 0.75rem; animation: pulse 2s infinite;">
                         <i class="bi bi-exclamation-triangle"></i> {{ $pendingApprovals }}
                     </span>
                     @else
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
                         <i class="bi bi-check-circle"></i>
                     </span>
                     @endif
                 </div>
                 <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Pending Approvals</h6>
-                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #D4AF37;">{{ $pendingApprovals }}</h2>
+                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #FFD700;">{{ $pendingApprovals }}</h2>
                 <p class="text-muted small mb-0 mt-2">Awaiting member approval</p>
             </div>
         </div>
@@ -114,13 +114,13 @@
     
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #D4AF37;">
+            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
+            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
                 <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-cash-stack" style="font-size: 1.8rem; color: #D4AF37;"></i>
+                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                        <i class="bi bi-cash-stack" style="font-size: 1.8rem; color: #FFD700;"></i>
                     </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
                         <i class="bi bi-currency-exchange"></i>
                     </span>
                 </div>

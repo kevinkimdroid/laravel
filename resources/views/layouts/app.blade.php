@@ -7,6 +7,10 @@
 
     <title>@yield('title', config('app.name', 'QBASH'))</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -20,7 +24,7 @@
     <style>
         :root {
             --qbash-black: #000000;
-            --qbash-yellow: #D4AF37;
+            --qbash-yellow: #FFD700;
             --qbash-white: #FFFFFF;
         }
         
@@ -82,12 +86,12 @@
             transition: all 0.3s ease !important;
         }
         .nav-link:hover {
-            background-color: rgba(212, 175, 55, 0.2) !important;
+            background-color: rgba(255, 215, 0, 0.2) !important;
             border-radius: 5px !important;
-            color: #D4AF37 !important;
+            color: #FFD700 !important;
         }
         .nav-link.active {
-            background-color: #D4AF37 !important;
+            background-color: #FFD700 !important;
             color: #000000 !important;
             border-radius: 5px !important;
             font-weight: 600 !important;

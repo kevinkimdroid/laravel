@@ -68,12 +68,12 @@
         font-weight: 500;
     }
 </style>
-<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #000000; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
+<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
     <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
     <div class="card-body p-4 position-relative" style="z-index: 1;">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <h3 class="mb-3 fw-bold text-white" style="font-size: 1.5rem;">
+                <h3 class="mb-3 fw-bold" style="font-size: 1.5rem; color: #000000;">
                     <i class="bi bi-cash-stack me-2" style="color: #D4AF37;"></i>Contributions Overview
                 </h3>
                 <form method="GET" action="{{ route('contributions.index') }}" id="yearForm" class="d-inline-flex align-items-center mt-2">
@@ -206,48 +206,48 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-bordered table-hover mb-0 align-middle contributions-table">
-                <thead style="background: #000000; border-bottom: 3px solid #D4AF37; color: white !important;">
+                <thead style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; color: #000000 !important;">
             <tr>
-                <th rowspan="2" class="text-white col-sn" style="font-weight: 600; color: white !important; background: transparent !important;">#</th>
-                <th rowspan="2" class="text-white col-member-no" style="font-weight: 600; color: white !important; background: transparent !important;">Mbr<br>No</th>
-                <th rowspan="2" class="text-white col-member-name" style="font-weight: 600; color: white !important; background: transparent !important;">Name</th>
-                <th rowspan="2" class="text-white col-initials" style="font-weight: 600; color: white !important; background: transparent !important;">Init</th>
-                <th rowspan="2" class="text-white col-reg-fee" style="font-weight: 600; color: white !important; background: transparent !important;">
+                <th rowspan="2" class="col-sn" style="font-weight: 600; color: #000000 !important; background: transparent !important;">#</th>
+                <th rowspan="2" class="col-member-no" style="font-weight: 600; color: #000000 !important; background: transparent !important;">Mbr<br>No</th>
+                <th rowspan="2" class="col-member-name" style="font-weight: 600; color: #000000 !important; background: transparent !important;">Name</th>
+                <th rowspan="2" class="col-initials" style="font-weight: 600; color: #000000 !important; background: transparent !important;">Init</th>
+                <th rowspan="2" class="col-reg-fee" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Reg Fee<br><small>(KES)</small>
                 </th>
-                <th colspan="{{ count($monthlyKeys) }}" class="text-white" style="font-weight: 600; color: white !important; background: transparent !important;">
+                <th colspan="{{ count($monthlyKeys) }}" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Monthly (KES)
                 </th>
-                <th rowspan="2" class="text-white col-outstanding" style="font-weight: 600; color: white !important; background: transparent !important;">
+                <th rowspan="2" class="col-outstanding" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Outstanding<br><small>(KES)</small>
                 </th>
-                <th rowspan="2" class="text-white col-months-behind" style="font-weight: 600; color: white !important; background: transparent !important;">
+                <th rowspan="2" class="col-months-behind" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Months<br>Behind
                 </th>
             </tr>
             <tr>
                 @if($year == 2024)
                     {{-- For 2024, only show July-December --}}
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jul</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Aug</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Sep</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Oct</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Nov</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Dec</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Jul</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Aug</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Sep</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Oct</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Nov</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Dec</th>
                 @else
                     {{-- For other years, show all 12 months --}}
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jan</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Feb</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Mar</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Apr</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">May</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jun</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Jul</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Aug</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Sep</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Oct</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Nov</th>
-                    <th class="text-white col-month" style="font-weight: 500; color: white !important; background: transparent !important;">Dec</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Jan</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Feb</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Mar</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Apr</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">May</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Jun</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Jul</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Aug</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Sep</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Oct</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Nov</th>
+                    <th class="col-month" style="font-weight: 500; color: #000000 !important; background: transparent !important;">Dec</th>
                 @endif
             </tr>
         </thead>

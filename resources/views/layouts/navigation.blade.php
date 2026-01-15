@@ -1,6 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background: #000000; border-bottom: 3px solid #D4AF37; min-height: 60px; position: sticky; top: 0; z-index: 1030; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
     <div class="container-fluid px-4">
         <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('dashboard') }}" style="font-size: 1.5rem;">
+            @if(file_exists(public_path('logo.svg')))
+                <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="height: 40px; width: auto; margin-right: 10px;">
+            @endif
             <span>{{ config('app.name', 'QBASH') }}</span>
         </a>
 

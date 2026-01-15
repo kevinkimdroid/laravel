@@ -4,25 +4,25 @@
 
 @section('content')
 <!-- Hero Header -->
-<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #000000; border-bottom: 3px solid #D4AF37; border-radius: 16px; min-height: 180px;">
-    <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
-    <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(212, 175, 55, 0.08); border-radius: 50%;"></div>
-    <div class="card-body text-white p-5 position-relative" style="z-index: 1;">
+<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; border-radius: 16px; min-height: 180px;">
+    <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255, 215, 0, 0.1); border-radius: 50%;"></div>
+    <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255, 215, 0, 0.08); border-radius: 50%;"></div>
+    <div class="card-body p-5 position-relative" style="z-index: 1;">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <h2 class="mb-3 fw-bold text-white" style="font-size: 1.75rem;">
-                    <i class="bi bi-person-circle me-2" style="color: #D4AF37;"></i>Welcome, {{ $member->name }}!
+                <h2 class="mb-3 fw-bold" style="font-size: 1.75rem; color: #000000;">
+                    <i class="bi bi-person-circle me-2" style="color: #FFD700;"></i>Welcome, {{ $member->name }}!
                 </h2>
                 <div class="d-flex gap-3 flex-wrap">
-                    <span class="badge px-3 py-2" style="background: rgba(212, 175, 55, 0.2); color: #D4AF37; border: 1px solid #D4AF37;">
+                    <span class="badge px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid #FFD700;">
                         <i class="bi bi-person-badge me-1"></i>Member No: {{ $member->member_no }}
                     </span>
-                    <span class="badge px-3 py-2" style="background: {{ $member->status === 'ACTIVE' ? '#D4AF37' : '#6c757d' }}; color: {{ $member->status === 'ACTIVE' ? '#000000' : '#FFFFFF' }};">
+                    <span class="badge px-3 py-2" style="background: {{ $member->status === 'ACTIVE' ? '#FFD700' : '#6c757d' }}; color: {{ $member->status === 'ACTIVE' ? '#000000' : '#FFFFFF' }};">
                         <i class="bi bi-check-circle me-1"></i>{{ $member->status }}
                     </span>
                 </div>
             </div>
-            <a href="{{ route('profile.edit') }}" class="btn mt-3 mt-md-0 shadow-sm" style="background: #D4AF37; color: #000000; border-radius: 10px;">
+            <a href="{{ route('profile.edit') }}" class="btn mt-3 mt-md-0 shadow-sm" style="background: #FFD700; color: #000000; border-radius: 10px;">
                 <i class="bi bi-gear me-1"></i>Edit Profile
             </a>
         </div>
@@ -122,7 +122,21 @@
                         <i class="bi bi-calendar-event" style="font-size: 1.8rem; color: #D4AF37;"></i>
                     </div>
                     <span class="badge rounded-pill px-3 py-2" style="background: rgba(212, 175, 55, 0.15); color: #D4AF37; font-size: 0.75rem;">
-                        <i class="bi bi-controller"></i>
+                        <!-- Pool Table Icon -->
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Table outline -->
+                            <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="#D4AF37"/>
+                            <!-- Pockets -->
+                            <circle cx="3" cy="6" r="1.5" fill="#D4AF37"/>
+                            <circle cx="21" cy="6" r="1.5" fill="#D4AF37"/>
+                            <circle cx="3" cy="18" r="1.5" fill="#D4AF37"/>
+                            <circle cx="21" cy="18" r="1.5" fill="#D4AF37"/>
+                            <!-- Center line -->
+                            <line x1="12" y1="6" x2="12" y2="18" stroke="#D4AF37" stroke-width="0.8"/>
+                            <!-- Pool balls -->
+                            <circle cx="8" cy="12" r="1.2" fill="#D4AF37"/>
+                            <circle cx="16" cy="12" r="1.2" fill="#D4AF37"/>
+                        </svg>
                     </span>
                 </div>
                 <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Games Played</h6>

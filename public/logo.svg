@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Outer gold ring -->
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#D4AF37" stroke-width="4"/>
+  
+  <!-- Middle gold ring -->
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#D4AF37" stroke-width="5"/>
+  
+  <!-- Black 8-ball -->
+  <circle cx="100" cy="100" r="50" fill="#000000" stroke="#D4AF37" stroke-width="2"/>
+  
+  <!-- Number 8 in gold -->
+  <text x="100" y="115" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#D4AF37" text-anchor="middle">8</text>
+  
+  <!-- Text: QBASH POOL CLUB -->
+  <text x="100" y="165" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">QBASH POOL CLUB</text>
+  
+  <!-- Text: ON TARGET -->
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="8" font-weight="600" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">ON TARGET</text>
+</svg>

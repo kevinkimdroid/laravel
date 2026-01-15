@@ -3,15 +3,15 @@
 @section('title', 'Members')
 
 @section('content')
-<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #000000; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
+<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
     <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
     <div class="card-body p-4 position-relative" style="z-index: 1;">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <h3 class="mb-3 fw-bold text-white" style="font-size: 1.5rem;">
+                <h3 class="mb-3 fw-bold" style="font-size: 1.5rem; color: #000000;">
                     <i class="bi bi-people-fill me-2" style="color: #D4AF37;"></i>Members Management
                 </h3>
-                <p class="text-white-50 mb-0">Total Members: <strong style="color: #D4AF37;">{{ $members->count() }}</strong></p>
+                <p class="text-muted mb-0">Total Members: <strong style="color: #D4AF37;">{{ $members->count() }}</strong></p>
             </div>
             <div class="mt-3 mt-md-0">
                 <a href="{{ route('whatsapp.index') }}" class="btn btn-success me-2" style="background-color: #25D366; border-color: #25D366; border-radius: 8px;">
@@ -106,16 +106,16 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light" style="background: #000000; border-bottom: 3px solid #D4AF37; color: white;">
+                <thead class="table-light" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; color: #000000;">
                     <tr>
-                        <th class="text-white">#</th>
-                        <th class="text-white">Member No</th>
-                        <th class="text-white">Name</th>
-                        <th class="text-white">Phone</th>
-                        <th class="text-white">Registration</th>
-                        <th class="text-white">Date</th>
-                        <th class="text-white">Status</th>
-                        <th class="text-white text-center">Actions</th>
+                        <th style="color: #000000;">#</th>
+                        <th style="color: #000000;">Member No</th>
+                        <th style="color: #000000;">Name</th>
+                        <th style="color: #000000;">Phone</th>
+                        <th style="color: #000000;">Registration</th>
+                        <th style="color: #000000;">Date</th>
+                        <th style="color: #000000;">Status</th>
+                        <th class="text-center" style="color: #000000;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
