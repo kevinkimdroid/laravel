@@ -117,24 +117,24 @@
 @endphp
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #D4AF37 !important;">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #FFD700 !important;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="rounded-circle p-3 me-3" style="background: rgba(212, 175, 55, 0.1);">
                         <!-- Pool Table Icon -->
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;">
                             <!-- Table outline -->
-                            <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="#D4AF37"/>
+                            <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="#FFD700"/>
                             <!-- Pockets -->
-                            <circle cx="3" cy="6" r="1.5" fill="#D4AF37"/>
-                            <circle cx="21" cy="6" r="1.5" fill="#D4AF37"/>
-                            <circle cx="3" cy="18" r="1.5" fill="#D4AF37"/>
-                            <circle cx="21" cy="18" r="1.5" fill="#D4AF37"/>
+                            <circle cx="3" cy="6" r="1.5" fill="#FFD700"/>
+                            <circle cx="21" cy="6" r="1.5" fill="#FFD700"/>
+                            <circle cx="3" cy="18" r="1.5" fill="#FFD700"/>
+                            <circle cx="21" cy="18" r="1.5" fill="#FFD700"/>
                             <!-- Center line -->
-                            <line x1="12" y1="6" x2="12" y2="18" stroke="#D4AF37" stroke-width="0.8"/>
+                            <line x1="12" y1="6" x2="12" y2="18" stroke="#FFD700" stroke-width="0.8"/>
                             <!-- Pool balls -->
-                            <circle cx="8" cy="12" r="1.5" fill="#D4AF37"/>
-                            <circle cx="16" cy="12" r="1.5" fill="#D4AF37"/>
+                            <circle cx="8" cy="12" r="1.5" fill="#FFD700"/>
+                            <circle cx="16" cy="12" r="1.5" fill="#FFD700"/>
                         </svg>
                     </div>
                     <div>
@@ -204,20 +204,20 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="well-played-tab" data-bs-toggle="tab" data-bs-target="#well-played" type="button" role="tab" aria-controls="well-played" aria-selected="false">
-            <i class="bi bi-star-fill me-1" style="color: #D4AF37;"></i>Well-Played
-            <span class="badge ms-1" style="background: #D4AF37; color: #000000;">{{ $wellPlayedGames->count() }}</span>
+            <i class="bi bi-star-fill me-1" style="color: #FFD700;"></i>Well-Played
+            <span class="badge ms-1" style="background: #FFD700; color: #000000;">{{ $wellPlayedGames->count() }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="close-games-tab" data-bs-toggle="tab" data-bs-target="#close-games" type="button" role="tab" aria-controls="close-games" aria-selected="false">
-            <i class="bi bi-lightning-charge me-1" style="color: #D4AF37;"></i>Close Games
-            <span class="badge ms-1" style="background: #D4AF37; color: #000000;">{{ $closeGames->count() }}</span>
+            <i class="bi bi-lightning-charge me-1" style="color: #FFD700;"></i>Close Games
+            <span class="badge ms-1" style="background: #FFD700; color: #000000;">{{ $closeGames->count() }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="high-scoring-tab" data-bs-toggle="tab" data-bs-target="#high-scoring" type="button" role="tab" aria-controls="high-scoring" aria-selected="false">
-            <i class="bi bi-fire me-1" style="color: #D4AF37;"></i>High Scoring
-            <span class="badge ms-1" style="background: #D4AF37; color: #000000;">{{ $highScoringGames->count() }}</span>
+            <i class="bi bi-fire me-1" style="color: #FFD700;"></i>High Scoring
+            <span class="badge ms-1" style="background: #FFD700; color: #000000;">{{ $highScoringGames->count() }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -236,7 +236,7 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                <thead class="table-light" style="background: linear-gradient(135deg, #D4AF37 0%, #c5a030 100%); color: white;">
+                <thead class="table-light" style="background: linear-gradient(135deg, #FFD700 0%, #c5a030 100%); color: white;">
                     <tr>
                         <th class="text-white">Date</th>
                         <th class="text-white">Member A</th>
@@ -263,7 +263,7 @@
                                 <i class="bi bi-calendar3 me-1 text-muted"></i>
                                 {{ $game->game_date->format('M d, Y') }}
                                 @if($isWellPlayed)
-                                    <i class="bi bi-star-fill ms-1" style="color: #D4AF37;" title="Well-Played Game"></i>
+                                    <i class="bi bi-star-fill ms-1" style="color: #FFD700;" title="Well-Played Game"></i>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->home_team }}</td>
@@ -274,17 +274,17 @@
                                     if ($isHighScoring) $badgeClass = 'bg-danger';
                                     elseif ($isClose) {
                                         $badgeClass = '';
-                                        $badgeStyle = 'background: #D4AF37; color: #000000;';
+                                        $badgeStyle = 'background: #FFD700; color: #000000;';
                                     }
                                 @endphp
                                 <span class="badge {{ $badgeClass }} fs-6 px-3 py-2" style="{{ $badgeStyle }}">
                                     {{ $game->home_score }} - {{ $game->away_score }}
                                 </span>
                                 @if($isClose)
-                                    <br><small style="color: #D4AF37;"><i class="bi bi-lightning-charge"></i> Close!</small>
+                                    <br><small style="color: #FFD700;"><i class="bi bi-lightning-charge"></i> Close!</small>
                                 @endif
                                 @if($isHighScoring)
-                                    <br><small style="color: #D4AF37;"><i class="bi bi-fire"></i> High Scoring!</small>
+                                    <br><small style="color: #FFD700;"><i class="bi bi-fire"></i> High Scoring!</small>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->away_team }}</td>

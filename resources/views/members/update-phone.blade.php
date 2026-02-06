@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-dark text-white py-3" style="border-bottom: 3px solid #D4AF37;">
+                <div class="card-header bg-dark text-white py-3" style="border-bottom: 3px solid #FFD700;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold">
-                            <i class="bi bi-telephone-fill me-2" style="color: #D4AF37;"></i>Update Phone Numbers
+                            <i class="bi bi-telephone-fill me-2" style="color: #FFD700;"></i>Update Phone Numbers
                         </h4>
-                        <a href="{{ route('members.index') }}" class="btn btn-sm" style="background: #D4AF37; color: #000000; border: none;">
+                        <a href="{{ route('members.index') }}" class="btn btn-sm" style="background: #FFD700; color: #000000; border: none;">
                             <i class="bi bi-arrow-left me-1"></i>Back to Members
                         </a>
                     </div>
@@ -52,7 +52,7 @@
 
                     <div class="mb-4">
                         <h5 class="fw-bold mb-3" style="color: #000000;">
-                            <i class="bi bi-info-circle me-2" style="color: #D4AF37;"></i>Instructions:
+                            <i class="bi bi-info-circle me-2" style="color: #FFD700;"></i>Instructions:
                         </h5>
                         <ol class="mb-3">
                             <li>Download the template below</li>
@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <a href="{{ route('members.phone-template') }}" class="btn" style="background: #D4AF37; color: #000000; border: none;">
+                        <a href="{{ route('members.phone-template') }}" class="btn" style="background: #FFD700; color: #000000; border: none;">
                             <i class="bi bi-download me-1"></i>Download Template
                         </a>
                     </div>
@@ -82,7 +82,7 @@
 
                         <div class="mb-4">
                             <label for="file" class="form-label fw-semibold" style="color: #000000;">
-                                <i class="bi bi-file-earmark-spreadsheet me-2" style="color: #D4AF37;"></i>Select Excel/CSV File
+                                <i class="bi bi-file-earmark-spreadsheet me-2" style="color: #FFD700;"></i>Select Excel/CSV File
                             </label>
                             <input type="file" 
                                    class="form-control @error('file') is-invalid @enderror" 
@@ -90,7 +90,7 @@
                                    name="file" 
                                    accept=".xlsx,.xls,.csv,.txt" 
                                    required
-                                   style="border: 2px solid #D4AF37;">
+                                   style="border: 2px solid #FFD700;">
                             @error('file')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -102,7 +102,7 @@
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ route('members.index') }}" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn" style="background: #000000; color: #FFFFFF; border: 2px solid #D4AF37;">
+                            <button type="submit" class="btn" style="background: #000000; color: #FFFFFF; border: 2px solid #FFD700;">
                                 <i class="bi bi-upload me-1"></i>Update Phone Numbers
                             </button>
                         </div>

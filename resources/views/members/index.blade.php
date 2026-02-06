@@ -3,45 +3,75 @@
 @section('title', 'Members')
 
 @section('content')
-<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
-    <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
-    <div class="card-body p-4 position-relative" style="z-index: 1;">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
+<style>
+    .members-toolbar .card-body {
+        padding: 1.25rem;
+    }
+    .members-table th,
+    .members-table td {
+        padding: 0.55rem 0.75rem;
+        vertical-align: middle;
+    }
+    .members-table th {
+        font-weight: 600;
+    }
+    .members-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.45rem;
+    }
+</style>
+<div class="card border-0 shadow-sm mb-3 position-relative overflow-hidden members-toolbar" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; border-radius: 16px;">
+    <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255, 215, 0, 0.08); border-radius: 50%;"></div>
+    <div class="card-body position-relative" style="z-index: 1;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
-                <h3 class="mb-3 fw-bold" style="font-size: 1.5rem; color: #000000;">
-                    <i class="bi bi-people-fill me-2" style="color: #D4AF37;"></i>Members Management
+                <h3 class="mb-1 fw-bold" style="color: #000000;">
+                    <i class="bi bi-people-fill me-2" style="color: #FFD700;"></i>Members
                 </h3>
-                <p class="text-muted mb-0">Total Members: <strong style="color: #D4AF37;">{{ $members->count() }}</strong></p>
+                <p class="text-muted mb-0">Total: <strong style="color: #FFD700;">{{ $members->count() }}</strong></p>
             </div>
-            <div class="mt-3 mt-md-0">
-                <a href="{{ route('whatsapp.index') }}" class="btn btn-success me-2" style="background-color: #25D366; border-color: #25D366; border-radius: 8px;">
-                    <i class="bi bi-whatsapp me-1"></i>WhatsApp Reminders
-                </a>
-                <a href="{{ route('members.import.form') }}" class="btn btn-outline-light me-2" style="border-color: #D4AF37; color: #D4AF37; border-radius: 8px;">
-                    <i class="bi bi-upload me-1"></i>Import CSV
-                </a>
-                <a href="{{ route('members.update-phone') }}" class="btn btn-outline-light me-2" style="border-color: #D4AF37; color: #D4AF37; border-radius: 8px;">
-                    <i class="bi bi-telephone-fill me-1"></i>Update Phones
-                </a>
-                <a href="{{ route('members.create') }}" class="btn" style="background: #D4AF37; color: #000000; border-radius: 8px;">
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('members.create') }}" class="btn btn-sm" style="background: #FFD700; color: #000000; border-radius: 8px;">
                     <i class="bi bi-plus-circle me-1"></i>Add Member
                 </a>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border-color: #FFD700; color: #000000;">
+                        More actions
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('whatsapp.index') }}">
+                                <i class="bi bi-whatsapp me-2"></i>WhatsApp Reminders
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('members.import.form') }}">
+                                <i class="bi bi-upload me-2"></i>Import CSV
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('members.update-phone') }}">
+                                <i class="bi bi-telephone-fill me-2"></i>Update Phones
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Search Bar -->
-<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
-    <div class="card-body p-4">
+<div class="card border-0 shadow-sm mb-3" style="border-radius: 16px; border-left: 4px solid #FFD700;">
+    <div class="card-body p-3">
         <form method="GET" action="{{ route('members.index') }}" class="row g-3 align-items-end">
             <div class="col-md-8">
-                <label for="search" class="form-label fw-semibold">
-                    <i class="bi bi-search me-2" style="color: #D4AF37;"></i>Search Members
+                <label for="search" class="form-label fw-semibold mb-1">
+                    <i class="bi bi-search me-2" style="color: #FFD700;"></i>Search Members
                 </label>
                 <div class="input-group">
-                    <span class="input-group-text" style="background: #f8f9fa; border-color: #D4AF37;">
-                        <i class="bi bi-search" style="color: #D4AF37;"></i>
+                    <span class="input-group-text" style="background: #f8f9fa; border-color: #FFD700;">
+                        <i class="bi bi-search" style="color: #FFD700;"></i>
                     </span>
                     <input type="text" 
                            class="form-control" 
@@ -49,16 +79,16 @@
                            name="search" 
                            value="{{ request('search') }}" 
                            placeholder="Search by name, member number, phone, or initials..."
-                           style="border-color: #D4AF37;">
+                           style="border-color: #FFD700;">
                     @if(request('search'))
-                        <a href="{{ route('members.index') }}" class="btn btn-outline-secondary" title="Clear search" style="border-color: #D4AF37;">
+                        <a href="{{ route('members.index') }}" class="btn btn-outline-secondary" title="Clear search" style="border-color: #FFD700;">
                             <i class="bi bi-x-lg"></i>
                         </a>
                     @endif
                 </div>
             </div>
             <div class="col-md-4">
-                <button type="submit" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 8px;">
+                <button type="submit" class="btn w-100 btn-sm" style="background: #FFD700; color: #000000; border-radius: 8px;">
                     <i class="bi bi-search me-1"></i>Search
                 </button>
             </div>
@@ -67,7 +97,7 @@
             <div class="mt-2">
                 <small class="text-muted">
                     Showing results for: <strong>"{{ request('search') }}"</strong>
-                    <a href="{{ route('members.index') }}" class="text-decoration-none ms-2" style="color: #D4AF37;">
+                    <a href="{{ route('members.index') }}" class="text-decoration-none ms-2" style="color: #FFD700;">
                         <i class="bi bi-x-circle me-1"></i>Clear
                     </a>
                 </small>
@@ -102,11 +132,11 @@
     </div>
 @endif
 
-<div class="card border-0 shadow-lg" style="border-radius: 16px;">
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; color: #000000;">
+            <table class="table table-hover table-sm mb-0 members-table">
+                <thead class="table-light" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; color: #000000;">
                     <tr>
                         <th style="color: #000000;">#</th>
                         <th style="color: #000000;">Member No</th>
@@ -122,7 +152,7 @@
                     @forelse($members as $member)
                     <tr>
                         <td class="fw-semibold">{{ $loop->iteration }}</td>
-                        <td><span class="badge" style="background: #D4AF37; color: #000000;">{{ $member->member_no }}</span></td>
+                        <td><span class="badge members-badge" style="background: #FFD700; color: #000000;">QBM{{ $member->member_no }}</span></td>
                         <td class="fw-semibold">{{ $member->name }}</td>
                         <td>
                             @if($member->phone)
@@ -133,17 +163,15 @@
                         </td>
                         <td>
                             @if($member->isRegistered ?? false)
-                                <span class="badge" style="background: #D4AF37; color: #000000;">
+                                <span class="badge members-badge" style="background: #FFD700; color: #000000;">
                                     <i class="bi bi-check-circle me-1"></i>Registered
                                 </span>
-                                <br>
-                                <small style="color: #D4AF37;">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} (in bank)</small>
+                                <div class="small" style="color: #FFD700;">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} (in bank)</div>
                             @else
-                                <span class="badge" style="background: #6c757d; color: #FFFFFF;">
+                                <span class="badge members-badge" style="background: #6c757d; color: #FFFFFF;">
                                     <i class="bi bi-exclamation-triangle me-1"></i>Not Registered
                                 </span>
-                                <br>
-                                <small class="text-muted">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} / 1,000.00</small>
+                                <div class="small text-muted">KES {{ number_format($member->registrationFeePaid ?? 0, 2) }} / 1,000.00</div>
                             @endif
                         </td>
                         <td>
@@ -152,9 +180,9 @@
                         </td>
                         <td>
                             @if($member->status === 'ACTIVE')
-                                <span class="badge" style="background: #D4AF37; color: #000000;"><i class="bi bi-check-circle me-1"></i>Active</span>
+                                <span class="badge members-badge" style="background: #FFD700; color: #000000;"><i class="bi bi-check-circle me-1"></i>Active</span>
                             @else
-                                <span class="badge bg-secondary"><i class="bi bi-x-circle me-1"></i>Inactive</span>
+                                <span class="badge members-badge bg-secondary"><i class="bi bi-x-circle me-1"></i>Inactive</span>
                             @endif
                         </td>
                         <td>

@@ -1,20 +1,20 @@
 @extends('layouts.guest')
 
 @section('content')
-<div class="container-fluid px-0" style="min-height: 100vh; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); position: relative; overflow: hidden;">
+<div class="container-fluid px-0 login-screen" style="min-height: 100vh; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); position: relative; overflow: hidden;">
     <!-- Animated Background Elements -->
     <div class="position-absolute w-100 h-100" style="z-index: 0;">
         <div class="position-absolute" style="top: -10%; right: -5%; width: 500px; height: 500px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(80px);"></div>
         <div class="position-absolute" style="bottom: -10%; left: -5%; width: 400px; height: 400px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(80px);"></div>
     </div>
 
-    <div class="container py-5 position-relative d-flex align-items-center justify-content-center" style="z-index: 1; min-height: 100vh;">
+    <div class="container py-2 position-relative d-flex align-items-center justify-content-center" style="z-index: 1; min-height: 100vh;">
         <div class="row justify-content-center w-100">
             <div class="col-lg-11 col-xl-10 col-xxl-9 mx-auto">
                 <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px; backdrop-filter: blur(10px); background: rgba(255,255,255,0.98);">
                     <div class="row g-0">
                         <!-- Left Side - Pool Table & QBASH Branding -->
-                        <div class="col-lg-6 d-none d-lg-flex position-relative" style="background: linear-gradient(135deg, #1d1d1d 0%, #111 100%); min-height: 620px; overflow: hidden;">
+                        <div class="col-lg-5 d-none d-lg-flex position-relative" style="background: linear-gradient(135deg, #1d1d1d 0%, #111 100%); min-height: 500px; overflow: hidden;">
                             <!-- Pool table background image (local asset) -->
                             <div class="position-absolute w-100 h-100" style="
                                 background-image: url('{{ asset('images/pool-table-bg.jpg') }}');
@@ -24,32 +24,32 @@
                                 mix-blend-mode: lighten;
                             "></div>
 
-                            <div class="position-relative w-100 h-100 d-flex flex-column justify-content-center align-items-center text-white p-5" style="z-index: 2;">
+                            <div class="position-relative w-100 h-100 d-flex flex-column justify-content-center align-items-center text-white p-4" style="z-index: 2;">
                                 <!-- QBASH Logo -->
-                                <div class="text-center mb-4">
-                                    <div class="mb-4">
+                                <div class="text-center mb-3">
+                                    <div class="mb-3">
                                         @if(file_exists(public_path('logo.svg')))
-                                            <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="width: 220px; height: 220px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); animation: float 3s ease-in-out infinite;">
+                                            <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="width: 160px; height: 160px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); animation: float 3s ease-in-out infinite;">
                                         @else
                                             <!-- Fallback CSS logo if SVG doesn't exist -->
                                             <div class="d-inline-flex flex-column align-items-center">
                                                 <div class="position-relative d-inline-flex align-items-center justify-content-center" 
-                                                     style="width: 180px; height: 180px; border: 3px solid #FFD700; border-radius: 50%; background: transparent;">
+                                                     style="width: 130px; height: 130px; border: 3px solid #FFD700; border-radius: 50%; background: transparent;">
                                                     <div class="position-absolute d-inline-flex align-items-center justify-content-center" 
-                                                         style="width: 140px; height: 140px; border: 4px solid #FFD700; border-radius: 50%; background: transparent;">
+                                                         style="width: 110px; height: 110px; border: 4px solid #FFD700; border-radius: 50%; background: transparent;">
                                                         <div class="position-absolute d-inline-flex align-items-center justify-content-center rounded-circle" 
-                                                             style="width: 100px; height: 100px; background: #2a2a2a; box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 -3px 10px rgba(0,0,0,0.3); animation: float 3s ease-in-out infinite;">
-                                                            <div class="fw-bold" style="font-size: 2.5rem; color: #FFD700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+                                                             style="width: 75px; height: 75px; background: #2a2a2a; box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 -3px 10px rgba(0,0,0,0.3); animation: float 3s ease-in-out infinite;">
+                                                            <div class="fw-bold" style="font-size: 1.9rem; color: #FFD700; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
                                                                 8
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="position-relative mt-3">
-                                                    <div class="text-uppercase fw-bold mb-1" style="font-size: 1.1rem; letter-spacing: 2px; color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                                                    <div class="text-uppercase fw-bold mb-1" style="font-size: 0.95rem; letter-spacing: 2px; color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
                                                         QBASH POOL CLUB
                                                     </div>
-                                                    <div class="text-uppercase fw-semibold" style="font-size: 0.9rem; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                                                    <div class="text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
                                                         ON TARGET
                                                     </div>
                                                 </div>
@@ -58,9 +58,9 @@
                                     </div>
                                 </div>
                                 
-                                <div class="mt-4 text-center w-100 px-4">
-                                    <h3 class="fw-bold mb-3" style="font-size: 1.6rem; color: #FFD700;">Welcome Back!</h3>
-                                    <p class="mb-4" style="opacity: 0.95; line-height: 1.6; font-size: 1rem;">
+                                <div class="mt-3 text-center w-100 px-4">
+                                    <h3 class="fw-bold mb-2" style="font-size: 1.2rem; color: #FFD700;">Welcome Back!</h3>
+                                    <p class="mb-3" style="opacity: 0.95; line-height: 1.4; font-size: 0.85rem;">
                                         Secure member and contribution management portal
                                     </p>
                                     <!-- Pool table icon instead of generic imagery -->
@@ -84,7 +84,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="d-flex justify-content-center gap-5 mt-4 w-100">
+                                <div class="d-flex justify-content-center gap-3 mt-3 w-100">
                                     <div class="text-center">
                                         <div class="rounded-circle p-3 mb-2 d-inline-block" style="background: rgba(255, 215, 0, 0.15); border: 2px solid #FFD700;">
                                             <i class="bi bi-people-fill" style="font-size: 1.8rem; color: #FFD700;"></i>
@@ -107,12 +107,12 @@
                             </div>
                             
                             <!-- Decorative Pool Balls -->
-                            <div class="position-absolute" style="top: 8%; right: 8%; width: 50px; height: 50px; background: #2a2a2a; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset -3px -3px 6px rgba(0,0,0,0.3); border: 2px solid #D4AF37; animation: float 4s ease-in-out infinite;">
+                            <div class="position-absolute" style="top: 8%; right: 8%; width: 50px; height: 50px; background: #2a2a2a; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset -3px -3px 6px rgba(0,0,0,0.3); border: 2px solid #FFD700; animation: float 4s ease-in-out infinite;">
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-                                    <span class="fw-bold" style="color: #D4AF37; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">8</span>
+                                    <span class="fw-bold" style="color: #FFD700; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">8</span>
                                 </div>
                             </div>
-                            <div class="position-absolute" style="bottom: 12%; left: 8%; width: 45px; height: 45px; background: #D4AF37; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset -3px -3px 6px rgba(0,0,0,0.2); border: 2px solid #2a2a2a; animation: float 3.5s ease-in-out infinite;">
+                            <div class="position-absolute" style="bottom: 12%; left: 8%; width: 45px; height: 45px; background: #FFD700; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset -3px -3px 6px rgba(0,0,0,0.2); border: 2px solid #2a2a2a; animation: float 3.5s ease-in-out infinite;">
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center">
                                     <span class="fw-bold" style="color: #2a2a2a; font-size: 1rem; text-shadow: 1px 1px 2px rgba(255,255,255,0.3);">1</span>
                                 </div>
@@ -120,19 +120,19 @@
                         </div>
 
                         <!-- Right Side - Login Form -->
-                        <div class="col-lg-6">
-                            <div class="p-5 p-md-5 p-lg-5">
+                        <div class="col-lg-7">
+                                <div class="p-3 p-md-3 p-lg-3">
                                 <!-- QBASH Logo for Mobile/Tablet -->
-                                <div class="text-center mb-4 d-lg-none">
+                                <div class="text-center mb-2 d-lg-none">
                                     @if(file_exists(public_path('logo.svg')))
-                                        <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="width: 150px; height: 150px; margin-bottom: 15px;">
+                                        <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="width: 120px; height: 120px; margin-bottom: 10px;">
                                     @else
                                         <div class="d-inline-flex flex-column align-items-center mb-3">
                                             <div class="position-relative d-inline-flex align-items-center justify-content-center mb-2" 
-                                                 style="width: 120px; height: 120px; border: 2px solid #FFD700; border-radius: 50%; background: transparent;">
+                                                 style="width: 100px; height: 100px; border: 2px solid #FFD700; border-radius: 50%; background: transparent;">
                                                 <div class="position-absolute d-inline-flex align-items-center justify-content-center rounded-circle" 
-                                                     style="width: 80px; height: 80px; background: #2a2a2a; border: 2px solid #FFD700;">
-                                                    <div class="fw-bold" style="font-size: 1.8rem; color: #FFD700;">8</div>
+                                                     style="width: 70px; height: 70px; background: #2a2a2a; border: 2px solid #FFD700;">
+                                                    <div class="fw-bold" style="font-size: 1.5rem; color: #FFD700;">8</div>
                                                 </div>
                                             </div>
                                             <div class="text-uppercase fw-bold mb-1" style="font-size: 0.9rem; letter-spacing: 1.5px; color: #000000;">
@@ -145,8 +145,12 @@
                                     @endif
                                 </div>
                                 
-                                <div class="text-center mb-5">
-                                    <h2 class="fw-bold mb-3" style="color: #000000; font-size: 2rem;">
+                                <div class="text-center mb-2">
+                                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-2 rounded-pill auth-badge" style="--accent: #FFD700;">
+                                        <i class="bi bi-stars"></i>
+                                        <span>QBASH Member Portal</span>
+                                    </div>
+                                    <h2 class="fw-bold mb-2 auth-title">
                                         <i class="bi bi-box-arrow-in-right me-2" style="color: #FFD700;"></i>Sign In
                                     </h2>
                                     <p class="text-muted mb-0">Enter your credentials to access your account</p>
@@ -172,66 +176,63 @@
                                     </div>
                                 @endif
 
-                                <form method="POST" action="{{ route('login') }}" class="mt-4">
+                                <form method="POST" action="{{ route('login') }}" class="mt-2">
                                     @csrf
 
-                                    <div class="mb-4">
-                                        <label for="login" class="form-label fw-semibold mb-3" style="color: #000000; font-size: 0.95rem;">
+                                    <div class="mb-2">
+                                        <label for="login" class="form-label fw-semibold mb-1" style="color: #000000; font-size: 0.9rem;">
                                             <i class="bi bi-person-fill me-2" style="color: #FFD700;"></i>Email or Phone Number
                                         </label>
-                                        <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden;">
-                                            <span class="input-group-text bg-white border-end-0" style="border: 2px solid #FFD700; border-right: none !important; padding: 12px 15px;">
+                                        <div class="input-group shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                                            <span class="input-group-text bg-white border-end-0" style="border: 2px solid #FFD700; border-right: none !important; padding: 8px 12px;">
                                                 <i class="bi bi-envelope-at" style="color: #FFD700; font-size: 1.1rem;"></i>
                                             </span>
                                             <input id="login" type="text" name="login" value="{{ old('login') }}"
                                                    class="form-control border-start-0 border-end-0" required autofocus autocomplete="username"
                                                    placeholder="Enter your email or phone"
-                                                   style="border: 2px solid #FFD700; padding: 12px 15px; font-size: 1rem; transition: all 0.3s ease;">
+                                                   style="border: 2px solid #FFD700; padding: 8px 12px; font-size: 0.92rem; transition: all 0.3s ease;">
                                         </div>
                                     </div>
 
-                                    <div class="mb-4">
-                                        <label for="password" class="form-label fw-semibold mb-3" style="color: #000000; font-size: 0.95rem;">
+                                    <div class="mb-2">
+                                        <label for="password" class="form-label fw-semibold mb-1" style="color: #000000; font-size: 0.9rem;">
                                             <i class="bi bi-lock-fill me-2" style="color: #FFD700;"></i>Password
                                         </label>
-                                        <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden;">
-                                            <span class="input-group-text bg-white border-end-0" style="border: 2px solid #FFD700; border-right: none !important; padding: 12px 15px;">
+                                        <div class="input-group shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                                            <span class="input-group-text bg-white border-end-0" style="border: 2px solid #FFD700; border-right: none !important; padding: 8px 12px;">
                                                 <i class="bi bi-key-fill" style="color: #FFD700; font-size: 1.1rem;"></i>
                                             </span>
                                             <input id="password" type="password" name="password"
                                                    class="form-control border-start-0 border-end-0" required autocomplete="current-password"
                                                    placeholder="Enter your password"
-                                                   style="border: 2px solid #FFD700; padding: 12px 15px; font-size: 1rem; transition: all 0.3s ease;">
-                                            <button class="btn btn-outline-secondary border-start-0 bg-white" type="button" id="togglePassword" style="border: 2px solid #FFD700; border-left: none !important; color: #FFD700; padding: 12px 15px;">
+                                                   style="border: 2px solid #FFD700; padding: 8px 12px; font-size: 0.92rem; transition: all 0.3s ease;">
+                                            <button class="btn btn-outline-secondary border-start-0 bg-white" type="button" id="togglePassword" style="border: 2px solid #FFD700; border-left: none !important; color: #FFD700; padding: 8px 12px;">
                                                 <i class="bi bi-eye" id="eyeIcon"></i>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="mb-2 d-flex justify-content-between align-items-center">
                                         <div class="form-check">
                                             <input id="remember_me" type="checkbox" class="form-check-input" name="remember" style="border: 2px solid #FFD700; cursor: pointer;">
-                                            <label class="form-check-label" for="remember_me" style="color: #000000; cursor: pointer; font-size: 0.9rem;">Remember me</label>
+                                            <label class="form-check-label" for="remember_me" style="color: #000000; cursor: pointer; font-size: 0.85rem;">Remember me</label>
                                         </div>
 
                                         @if (Route::has('password.request'))
-                                            <a href="{{ route('password.request') }}" class="text-decoration-none fw-semibold" style="color: #FFD700; font-size: 0.9rem;">
+                                            <a href="{{ route('password.request') }}" class="text-decoration-none fw-semibold" style="color: #FFD700; font-size: 0.85rem;">
                                                 <i class="bi bi-question-circle me-1"></i>Forgot password?
                                             </a>
                                         @endif
                                     </div>
 
-                                    <div class="d-grid mb-4">
-                                        <button type="submit" class="btn btn-primary fw-semibold shadow-lg border-0" 
-                                                style="background: #FFD700; color: #000000; border-radius: 12px; padding: 14px; font-size: 1.1rem; transition: all 0.3s ease; transform: translateY(0); border: 2px solid #FFD700 !important;"
-                                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(255, 215, 0, 0.4)'; this.style.background='#f0c800'; this.style.color='#000000';"
-                                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 215, 0, 0.3)'; this.style.background='#FFD700'; this.style.color='#000000';">
+                                    <div class="d-grid mb-2">
+                                        <button type="submit" class="btn btn-primary fw-semibold shadow-lg btn-auth-primary" style="--accent: #FFD700; --accent-dark: #f0c800;">
                                             <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
                                         </button>
                                     </div>
 
                                     @if (Route::has('register'))
-                                        <div class="text-center pt-4 border-top">
+                                        <div class="text-center pt-2 border-top small">
                                             <p class="text-muted mb-0">
                                                 Don't have an account?
                                                 <a href="{{ route('register') }}" class="fw-bold text-decoration-none" style="color: #FFD700;">
@@ -259,13 +260,58 @@
             transform: translateY(-10px);
         }
     }
+
+    .auth-title {
+        color: #000000;
+        font-size: 1.45rem;
+        letter-spacing: 0.2px;
+    }
+
+    .auth-badge {
+        background: rgba(255, 215, 0, 0.12);
+        color: #6b5a00;
+        font-weight: 600;
+        font-size: 0.75rem;
+        border: 1px solid rgba(255, 215, 0, 0.5);
+    }
+
+    .btn-auth-primary {
+        background: var(--accent);
+        color: #000000;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.9rem;
+        border: 2px solid var(--accent) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .login-screen .card {
+        max-height: 90vh;
+    }
+
+    .login-screen .card .row.g-0 > [class*="col-"] {
+        min-height: 100%;
+    }
+
+    .btn-auth-primary:hover,
+    .btn-auth-primary:focus {
+        background: var(--accent-dark);
+        color: #000000;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(255, 215, 0, 0.35);
+    }
+
+    .btn-auth-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 18px rgba(255, 215, 0, 0.25);
+    }
     
     .min-vh-100 {
         min-height: 100vh;
     }
     
     .form-control:focus {
-        border-color: #D4AF37 !important;
+        border-color: #FFD700 !important;
         box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
     }
     
@@ -274,7 +320,7 @@
     }
     
     .input-group:focus-within .input-group-text {
-        border-color: #D4AF37 !important;
+        border-color: #FFD700 !important;
         background-color: #faf8f0 !important;
     }
     

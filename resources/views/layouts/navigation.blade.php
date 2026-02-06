@@ -1,129 +1,76 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background: #000000; border-bottom: 3px solid #D4AF37; min-height: 60px; position: sticky; top: 0; z-index: 1030; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-    <div class="container-fluid px-4">
-        <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="{{ route('dashboard') }}" style="font-size: 1.5rem;">
-            @if(file_exists(public_path('logo.svg')))
-                <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="height: 40px; width: auto; margin-right: 10px;">
+<aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="{{ route('dashboard') }}">
+        @if(file_exists(public_path('logo.svg')))
+            <img src="{{ asset('logo.svg') }}" alt="QBASH Logo" style="height: 32px; width: auto;">
+        @endif
+        <span>{{ config('app.name', 'QBASH') }}</span>
+    </a>
+
+    @auth
+        <div class="sidebar-section">
+            @if(auth()->user() && auth()->user()->role === 'admin')
+                <div class="sidebar-title">Admin</div>
+                <a class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                    <i class="bi bi-speedometer2"></i>Admin Dashboard
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}">
+                    <i class="bi bi-people"></i>Members
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('contributions.*') ? 'active' : '' }}" href="{{ route('contributions.index') }}">
+                    <i class="bi bi-cash-stack"></i>Contributions
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('calendar-activities.*') ? 'active' : '' }}" href="{{ route('calendar-activities.index') }}">
+                    <i class="bi bi-calendar-event"></i>Calendar
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('expenses.index') }}">
+                    <i class="bi bi-receipt"></i>Expenses
+                </a>
+            @elseif(auth()->user())
+                <div class="sidebar-title">Member</div>
+                <a class="sidebar-link {{ request()->routeIs('member.dashboard') ? 'active' : '' }}" href="{{ route('member.dashboard') }}">
+                    <i class="bi bi-speedometer2"></i>My Dashboard
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('member.contributions') ? 'active' : '' }}" href="{{ route('member.contributions') }}">
+                    <i class="bi bi-cash-stack"></i>My Contributions
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('member.calendar') ? 'active' : '' }}" href="{{ route('member.calendar') }}">
+                    <i class="bi bi-calendar-event"></i>Calendar
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('member.qpl.*') || request()->routeIs('qpl-games.standings') ? 'active' : '' }}" href="{{ route('member.qpl.standings') }}">
+                    <i class="bi bi-trophy"></i>QPL Standings
+                </a>
+            @else
+                <div class="sidebar-title">Menu</div>
+                <a class="sidebar-link" href="{{ route('dashboard') }}">
+                    <i class="bi bi-speedometer2"></i>Dashboard
+                </a>
             @endif
-            <span>{{ config('app.name', 'QBASH') }}</span>
-        </a>
-
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255,255,255,0.5) !important;">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                @auth
-                    @if(auth()->user() && auth()->user()->role === 'admin')
-                        {{-- Admin Navigation --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-people me-1"></i>Members
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('contributions.*') ? 'active' : '' }}" href="{{ route('contributions.index') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-cash-stack me-1"></i>Contributions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('calendar-activities.*') ? 'active' : '' }}" href="{{ route('calendar-activities.index') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-calendar-event me-1"></i>Calendar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('expenses.index') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-receipt me-1"></i>Expenses
-                            </a>
-                        </li>
-                    @elseif(auth()->user())
-                        {{-- Member Navigation --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.*') ? 'active' : '' }}" href="{{ route('member.dashboard') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-speedometer2 me-1"></i>My Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.contributions') ? 'active' : '' }}" href="{{ route('member.contributions') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-cash-stack me-1"></i>My Contributions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.calendar') ? 'active' : '' }}" href="{{ route('member.calendar') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-calendar-event me-1"></i>Calendar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2 {{ request()->routeIs('member.qpl.*') || request()->routeIs('qpl-games.standings') ? 'active' : '' }}" href="{{ route('member.qpl.standings') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-trophy me-1"></i>QPL Standings
-                            </a>
-                        </li>
-                    @else
-                        {{-- Generic Navigation --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white px-3 py-2" href="{{ route('dashboard') }}" style="font-weight: 500; display: block;">
-                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
-                            </a>
-                        </li>
-                    @endif
-                @endauth
-            </ul>
-
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @auth
-                    <li class="nav-item dropdown me-3">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center px-3 py-2" href="#" id="userDropdown" 
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 500; display: block;">
-                            <i class="bi bi-person-circle me-2" style="font-size: 1.2rem;"></i>
-                            <span>{{ auth()->user()->name }}</span>
-                            @if(auth()->user()->role === 'admin')
-                                <span class="badge ms-2" style="background: #D4AF37; color: #000000;">Admin</span>
-                            @endif
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="bi bi-person me-2"></i>Profile
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}" class="m-0">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger w-100 text-start border-0 bg-transparent">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item d-flex align-items-center">
-                        <form method="POST" action="{{ route('logout') }}" class="m-0">
-                            @csrf
-                            <button type="submit" class="btn btn-sm px-3" style="white-space: nowrap; background: #D4AF37; color: #000000; border: 2px solid #D4AF37;">
-                                <i class="bi bi-box-arrow-right me-1"></i>Logout
-                            </button>
-                        </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link text-white px-3 py-2" href="{{ route('login') }}" style="font-weight: 500; display: block;">
-                            Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white px-3 py-2" href="{{ route('register') }}" style="font-weight: 500; display: block;">
-                            Register
-                        </a>
-                    </li>
-                @endauth
-            </ul>
         </div>
+    @endauth
+
+    <div class="sidebar-footer">
+        @auth
+            <div class="small text-uppercase" style="color: rgba(255, 255, 255, 0.6); letter-spacing: 0.08em;">Account</div>
+            <div class="d-flex align-items-center gap-2 mt-2">
+                <i class="bi bi-person-circle"></i>
+                <div class="small">{{ auth()->user()->name }}</div>
+            </div>
+            <a class="sidebar-link mt-3" href="{{ route('profile.edit') }}">
+                <i class="bi bi-person"></i>Profile
+            </a>
+            <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                @csrf
+                <button type="submit" class="sidebar-link w-100 border-0 bg-transparent text-start">
+                    <i class="bi bi-box-arrow-right"></i>Logout
+                </button>
+            </form>
+        @else
+            <a class="sidebar-link" href="{{ route('login') }}">
+                <i class="bi bi-box-arrow-in-right"></i>Login
+            </a>
+            <a class="sidebar-link mt-2" href="{{ route('register') }}">
+                <i class="bi bi-person-plus"></i>Register
+            </a>
+        @endauth
     </div>
-</nav>
+</aside>

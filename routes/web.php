@@ -149,6 +149,7 @@ Route::middleware('auth')->group(function () {
 
         // Expenses / financial overview
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::get('/expenses/export', [ExpenseController::class, 'export'])->name('expenses.export');
         Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
         Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
 

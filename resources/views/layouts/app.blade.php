@@ -23,174 +23,275 @@
     
     <style>
         :root {
-            --qbash-black: #000000;
-            --qbash-yellow: #FFD700;
-            --qbash-white: #FFFFFF;
+            --qbash-black: #0f0f0f;
+            --qbash-gold: #FFD700;
+            --qbash-white: #ffffff;
+            --qbash-gray-50: #f6f6f6;
+            --qbash-gray-200: #e6e6e6;
+            --qbash-gray-600: #6b6b6b;
+            --sidebar-width: 240px;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--qbash-gray-50);
+            font-size: 0.95rem;
         }
-        
+
         /* Override Bootstrap primary colors */
         .btn-primary {
             background-color: var(--qbash-black) !important;
-            border-color: var(--qbash-yellow) !important;
+            border-color: var(--qbash-gold) !important;
             color: var(--qbash-white) !important;
         }
         .btn-primary:hover {
-            background-color: var(--qbash-yellow) !important;
-            border-color: var(--qbash-yellow) !important;
+            background-color: var(--qbash-gold) !important;
+            border-color: var(--qbash-gold) !important;
             color: var(--qbash-black) !important;
         }
-        
+
         .bg-primary {
             background-color: var(--qbash-black) !important;
         }
-        
+
         .text-primary {
-            color: var(--qbash-yellow) !important;
+            color: var(--qbash-gold) !important;
         }
-        
+
         .border-primary {
-            border-color: var(--qbash-yellow) !important;
+            border-color: var(--qbash-gold) !important;
         }
-        
-        /* Outer yellow circle in logo */
-        .logo-outer-ring {
-            border-color: var(--qbash-yellow) !important;
-        }
-        
-        /* Inner yellow ring in logo */
-        .logo-inner-ring {
-            border-color: var(--qbash-yellow) !important;
-        }
-        
+
         .badge.bg-primary {
             background-color: var(--qbash-black) !important;
             color: var(--qbash-white) !important;
         }
-        .navbar {
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 1030 !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+
+        .app-shell {
+            display: flex;
+            min-height: 100vh;
         }
-        .navbar-nav {
-            display: flex !important;
-            flex-direction: row !important;
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--qbash-black);
+            color: var(--qbash-white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 1030;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .nav-link {
-            color: white !important;
-            padding: 0.5rem 1rem !important;
-            transition: all 0.3s ease !important;
+
+        .sidebar-brand {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--qbash-white);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .nav-link:hover {
-            background-color: rgba(255, 215, 0, 0.2) !important;
-            border-radius: 5px !important;
-            color: #FFD700 !important;
+
+        .sidebar-section {
+            padding: 1rem 0.75rem;
         }
-        .nav-link.active {
-            background-color: #FFD700 !important;
-            color: #000000 !important;
-            border-radius: 5px !important;
-            font-weight: 600 !important;
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.55);
+            padding: 0 0.75rem 0.5rem;
         }
-        .navbar-toggler {
-            border-color: rgba(255, 255, 255, 0.5) !important;
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s ease, color 0.2s ease;
         }
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+
+        .sidebar-link:hover {
+            background: rgba(212, 175, 55, 0.18);
+            color: var(--qbash-gold);
         }
-        .navbar-nav {
-            display: flex !important;
-            flex-direction: row !important;
+
+        .sidebar-link.active {
+            background: var(--qbash-gold);
+            color: var(--qbash-black);
         }
-        .nav-item {
-            display: flex !important;
-            align-items: center !important;
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .nav-link {
-            display: block !important;
-            color: white !important;
+
+        .app-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .collapse.navbar-collapse {
-            display: flex !important;
+
+        .mobile-topbar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--qbash-white);
+            border-bottom: 1px solid var(--qbash-gray-200);
         }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1020;
+        }
+
         @media (max-width: 991px) {
-            .collapse.navbar-collapse {
-                display: none !important;
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.2s ease;
             }
-            .collapse.navbar-collapse.show {
-                display: block !important;
+
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
             }
-            .navbar-nav {
-                flex-direction: column !important;
+
+            .app-content {
+                margin-left: 0;
+            }
+
+            .mobile-topbar {
+                display: flex;
+            }
+
+            body.sidebar-open .sidebar-overlay {
+                display: block;
             }
         }
+
         .card {
-            border-radius: 10px;
+            border-radius: 12px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
         }
+
         .btn {
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 500;
             transition: all 0.3s ease;
         }
+
         .btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
         }
+
         .table {
             border-radius: 8px;
             overflow: hidden;
         }
+
         .table thead th {
             border: none;
             font-weight: 600;
         }
+
+        h1, .h1 { font-size: 1.55rem; }
+        h2, .h2 { font-size: 1.35rem; }
+        h3, .h3 { font-size: 1.2rem; }
+        h4, .h4 { font-size: 1.05rem; }
+        h5, .h5 { font-size: 0.95rem; }
+
+        .lead { font-size: 0.98rem; }
+        .nav-link, .dropdown-item { font-size: 0.9rem; }
+        .badge { font-size: 0.72rem; }
+        .btn { font-size: 0.9rem; }
+        .form-label { font-size: 0.9rem; }
+        .form-control, .form-select { font-size: 0.9rem; }
+        .table td, .table th { font-size: 0.9rem; }
+
+        .alert-success,
+        .alert-danger {
+            background: rgba(255, 215, 0, 0.12);
+            color: var(--qbash-black);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+
+        .alert-success .btn-close,
+        .alert-danger .btn-close {
+            filter: brightness(0.4);
+        }
     </style>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
-    @include('layouts.navigation')
+    <div class="app-shell">
+        @include('layouts.navigation')
 
-    @isset($header)
-        <header class="bg-white border-bottom shadow-sm">
-            <div class="container py-3">
-                {{ $header }}
+        <div class="app-content">
+            <div class="mobile-topbar">
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="sidebarToggle">
+                    <i class="bi bi-list"></i> Menu
+                </button>
+                <span class="fw-semibold">{{ config('app.name', 'QBASH') }}</span>
             </div>
-        </header>
-    @endisset
 
-    <main class="flex-grow-1 py-4">
-        <div class="container">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @isset($header)
+                <header class="bg-white border-bottom shadow-sm">
+                    <div class="container py-3">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
+
+            <main class="flex-grow-1 py-4">
+                <div class="container">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    {{-- Support both component slots (<x-app-layout>) and @section("content") --}}
+                    {{ $slot ?? '' }}
+                    @yield('content')
                 </div>
-            @endif
+            </main>
 
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            {{-- Support both component slots (<x-app-layout>) and @section("content") --}}
-            {{ $slot ?? '' }}
-            @yield('content')
+            <footer class="bg-white border-top text-center py-3 mt-auto small text-muted">
+                &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+            </footer>
         </div>
-    </main>
-
-    <footer class="bg-white border-top text-center py-3 mt-auto small text-muted">
-        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
-    </footer>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Bootstrap JS (for navbar, alerts, etc.) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -198,26 +299,21 @@
             crossorigin="anonymous"></script>
     
     <script>
-        // Ensure navbar is visible
         document.addEventListener('DOMContentLoaded', function() {
-            const navbar = document.getElementById('mainNavbar');
-            if (navbar) {
-                navbar.style.display = 'flex';
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    document.body.classList.toggle('sidebar-open');
+                });
             }
-            
-            // Force show nav items
-            const navItems = document.querySelectorAll('.navbar-nav .nav-item');
-            navItems.forEach(item => {
-                item.style.display = 'flex';
-                item.style.visibility = 'visible';
-            });
-            
-            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-            navLinks.forEach(link => {
-                link.style.display = 'block';
-                link.style.visibility = 'visible';
-                link.style.color = 'white';
-            });
+
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    document.body.classList.remove('sidebar-open');
+                });
+            }
         });
     </script>
 </body>

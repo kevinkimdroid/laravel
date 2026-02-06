@@ -7,6 +7,7 @@
 <style>
     .contributions-table {
         width: 100%;
+        min-width: 1200px;
         table-layout: fixed;
     }
     .contributions-table thead th {
@@ -14,7 +15,7 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
         white-space: normal;
         word-wrap: break-word;
-        padding: 12px 8px;
+        padding: 6px 6px;
         text-align: center;
         color: white !important;
         background: transparent !important;
@@ -22,8 +23,9 @@
     .contributions-table tbody td {
         vertical-align: middle;
         border: 1px solid #dee2e6;
-        padding: 10px 8px;
+        padding: 6px 6px;
         text-align: center;
+        font-size: 0.85rem;
     }
     .contributions-table tbody tr:hover {
         background-color: #f8f9fa;
@@ -31,6 +33,9 @@
     }
     .contributions-table tbody tr {
         transition: background-color 0.2s ease;
+    }
+    .contributions-table tbody tr:nth-child(even) {
+        background-color: rgba(255, 215, 0, 0.04);
     }
     .contributions-table tbody td.month-cell {
         position: relative;
@@ -52,53 +57,76 @@
         width: 100px;
     }
     .contributions-table .col-month {
-        width: 65px;
+        width: 52px;
+        min-width: 52px;
         text-align: right !important;
-        font-size: 0.85rem;
+        font-size: 0.78rem;
     }
     .contributions-table .col-outstanding {
         width: 110px;
+        text-align: right !important;
+    }
+    .contributions-table .col-total-paid {
+        width: 95px;
         text-align: right !important;
     }
     .contributions-table .col-months-behind {
         width: 90px;
     }
     .contributions-table .month-cell {
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         font-weight: 500;
     }
+    .contributions-table thead th {
+        font-size: 0.82rem;
+    }
+    .contributions-table tbody td {
+        line-height: 1.2;
+    }
+    .contributions-table thead th.col-month {
+        white-space: nowrap;
+        word-break: keep-all;
+        line-height: 1;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    .contributions-toolbar .card-body {
+        padding: 1.25rem;
+    }
 </style>
-<div class="card border-0 shadow-lg mb-4 position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; border-radius: 16px;">
-    <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(212, 175, 55, 0.1); border-radius: 50%;"></div>
-    <div class="card-body p-4 position-relative" style="z-index: 1;">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
+<div class="card border-0 shadow-sm mb-3 position-relative overflow-hidden contributions-toolbar" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; border-radius: 16px;">
+    <div class="position-absolute" style="top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255, 215, 0, 0.08); border-radius: 50%;"></div>
+    <div class="card-body position-relative" style="z-index: 1;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
-                <h3 class="mb-3 fw-bold" style="font-size: 1.5rem; color: #000000;">
-                    <i class="bi bi-cash-stack me-2" style="color: #D4AF37;"></i>Contributions Overview
+                <h3 class="mb-1 fw-bold" style="color: #000000;">
+                    <i class="bi bi-cash-stack me-2" style="color: #FFD700;"></i>Contributions
                 </h3>
-                <form method="GET" action="{{ route('contributions.index') }}" id="yearForm" class="d-inline-flex align-items-center mt-2">
-                    <label for="year" class="form-label me-2 mb-0 fw-semibold text-white-50">Year:</label>
-                    <select name="year" id="year" class="form-select form-select-md shadow-sm" style="width: 130px; font-weight: 600; border: 2px solid #D4AF37; background: #ffffff;" onchange="document.getElementById('yearForm').submit();">
-                        @for($y = now()->year; $y >= 2024; $y--)
-                            <option value="{{ $y }}" {{ (int)$year === (int)$y ? 'selected' : '' }}>
-                                {{ $y }}
-                            </option>
-                        @endfor
-                    </select>
-                    @if(request('search'))
-                        <input type="hidden" name="search" value="{{ request('search') }}">
-                    @endif
-                    <button type="submit" class="btn btn-sm ms-2 shadow-sm" id="yearSubmitBtn" style="background: #D4AF37; color: #000000; border: none; border-radius: 8px;">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Load
-                    </button>
-                </form>
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                    <label for="year" class="form-label mb-0 fw-semibold">Year</label>
+                    <form method="GET" action="{{ route('contributions.index') }}" id="yearForm" class="d-flex align-items-center gap-2">
+                        <select name="year" id="year" class="form-select form-select-sm shadow-sm" style="width: 110px; font-weight: 600; border: 1px solid #FFD700; background: #ffffff;" onchange="document.getElementById('yearForm').submit();">
+                            @for($y = now()->year; $y >= 2024; $y--)
+                                <option value="{{ $y }}" {{ (int)$year === (int)$y ? 'selected' : '' }}>
+                                    {{ $y }}
+                                </option>
+                            @endfor
+                        </select>
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        <button type="submit" class="btn btn-sm shadow-sm" id="yearSubmitBtn" style="background: #FFD700; color: #000000; border: none; border-radius: 8px;">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Load
+                        </button>
+                    </form>
+                </div>
             </div>
-            <div class="mt-3 mt-md-0">
-                <a href="{{ route('contributions.import.form') }}" class="btn btn-outline-light me-2" style="border-color: #D4AF37; color: #D4AF37; border-radius: 8px;">
-                    <i class="bi bi-upload me-1"></i>Import CSV
-                </a>
-                <a href="{{ route('contributions.create') }}" class="btn" style="background: #D4AF37; color: #000000; border-radius: 8px;">
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('contributions.create') }}" class="btn btn-sm" style="background: #FFD700; color: #000000; border-radius: 8px;">
                     <i class="bi bi-plus-circle me-1"></i>Post Contribution
+                </a>
+                <a href="{{ route('contributions.import.form') }}" class="btn btn-sm btn-outline-dark" style="border-color: #FFD700; color: #000000; border-radius: 8px;">
+                    <i class="bi bi-upload me-1"></i>Import CSV
                 </a>
             </div>
         </div>
@@ -106,17 +134,17 @@
 </div>
 
 <!-- Search Bar -->
-<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
-    <div class="card-body p-4">
+<div class="card border-0 shadow-sm mb-3" style="border-radius: 16px; border-left: 4px solid #FFD700;">
+    <div class="card-body p-3">
         <form method="GET" action="{{ route('contributions.index') }}" class="row g-3 align-items-end">
             <input type="hidden" name="year" value="{{ $year }}">
             <div class="col-md-8">
                 <label for="search" class="form-label fw-semibold">
-                    <i class="bi bi-search me-2" style="color: #D4AF37;"></i>Search Members
+                    <i class="bi bi-search me-2" style="color: #FFD700;"></i>Search Members
                 </label>
                 <div class="input-group">
-                    <span class="input-group-text" style="background: #f8f9fa; border-color: #D4AF37;">
-                        <i class="bi bi-search" style="color: #D4AF37;"></i>
+                    <span class="input-group-text" style="background: #f8f9fa; border-color: #FFD700;">
+                        <i class="bi bi-search" style="color: #FFD700;"></i>
                     </span>
                     <input type="text" 
                            class="form-control" 
@@ -124,16 +152,16 @@
                            name="search" 
                            value="{{ request('search') }}" 
                            placeholder="Search by name, member number, phone, or initials..."
-                           style="border-color: #D4AF37;">
+                           style="border-color: #FFD700;">
                     @if(request('search'))
-                        <a href="{{ route('contributions.index', ['year' => $year]) }}" class="btn btn-outline-secondary" title="Clear search" style="border-color: #D4AF37;">
+                        <a href="{{ route('contributions.index', ['year' => $year]) }}" class="btn btn-outline-secondary" title="Clear search" style="border-color: #FFD700;">
                             <i class="bi bi-x-lg"></i>
                         </a>
                     @endif
                 </div>
             </div>
             <div class="col-md-4">
-                <button type="submit" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 8px;">
+                <button type="submit" class="btn w-100 btn-sm" style="background: #FFD700; color: #000000; border-radius: 8px;">
                     <i class="bi bi-search me-1"></i>Search
                 </button>
             </div>
@@ -142,7 +170,7 @@
             <div class="mt-2">
                 <small class="text-muted">
                     Showing results for: <strong>"{{ request('search') }}"</strong>
-                    <a href="{{ route('contributions.index', ['year' => $year]) }}" class="text-decoration-none ms-2" style="color: #D4AF37;">
+                    <a href="{{ route('contributions.index', ['year' => $year]) }}" class="text-decoration-none ms-2" style="color: #FFD700;">
                         <i class="bi bi-x-circle me-1"></i>Clear
                     </a>
                 </small>
@@ -181,32 +209,30 @@
     @endif
 @endif
 
-<div class="alert shadow-sm mb-4 border-start border-4" style="background: rgba(212, 175, 55, 0.1); border-color: #D4AF37 !important; border-radius: 12px;">
-    <div class="d-flex align-items-start">
-        <i class="bi bi-info-circle me-3" style="font-size: 1.3rem; color: #D4AF37;"></i>
-        <div>
-            <h6 class="alert-heading fw-bold mb-2" style="color: #000000; font-size: 1rem;">
-                <i class="bi bi-calendar-year me-1" style="color: #D4AF37;"></i>Contributions for {{ $year }}
-            </h6>
-            @if($year == 2024)
-                <p class="mb-1">The club officially started in <strong>July 2024</strong>, so only months from July onwards are shown.</p>
-                <p class="mb-0">Expected contributions: <strong style="color: #D4AF37;">{{ number_format($expectedPerMonth, 0) }} KES/month</strong> for {{ count($monthlyKeys) }} months.</p>
-            @else
-                <p class="mb-1">Showing all 12 months for <strong>{{ $year }}</strong>.</p>
-                <p class="mb-0">Expected contributions: <strong style="color: #D4AF37;">{{ number_format($expectedPerMonth, 0) }} KES/month</strong>.</p>
-            @endif
-            <p class="mb-0 mt-2 small">
-                <i class="bi bi-lightbulb me-1"></i><strong>Note:</strong> The table shows contributions paid in <strong>{{ $year }}</strong>. Outstanding balances are <strong>cumulative</strong> - they include all previous years' outstanding brought forward to the end of <strong>{{ $year }}</strong>{{ $year == now()->year ? ' (current month)' : '' }}, calculated from each member's join date.
-            </p>
-        </div>
+<details class="alert shadow-sm mb-3 border-start border-4" style="background: rgba(255, 215, 0, 0.08); border-color: #FFD700 !important; border-radius: 12px;">
+    <summary class="fw-semibold d-flex align-items-center justify-content-between" style="cursor: pointer; color: #000000;">
+        <span><i class="bi bi-info-circle me-2" style="color: #FFD700;"></i>Contributions for {{ $year }}</span>
+        <span class="small text-muted">Click to expand</span>
+    </summary>
+    <div class="mt-2">
+        @if($year == 2024)
+            <p class="mb-1">The club officially started in <strong>July 2024</strong>, so only months from July onwards are shown.</p>
+            <p class="mb-0">Expected contributions: <strong style="color: #FFD700;">{{ number_format($expectedPerMonth, 0) }} KES/month</strong> for {{ count($monthlyKeys) }} months.</p>
+        @else
+            <p class="mb-1">Showing all 12 months for <strong>{{ $year }}</strong>.</p>
+            <p class="mb-0">Expected contributions: <strong style="color: #FFD700;">{{ number_format($expectedPerMonth, 0) }} KES/month</strong>.</p>
+        @endif
+        <p class="mb-0 mt-2 small">
+            <i class="bi bi-lightbulb me-1"></i><strong>Note:</strong> The table shows contributions paid in <strong>{{ $year }}</strong>. Outstanding balances are <strong>cumulative</strong> - they include all previous years' outstanding brought forward to the end of <strong>{{ $year }}</strong>{{ $year == now()->year ? ' (current month)' : '' }}, calculated from each member's join date.
+        </p>
     </div>
-</div>
+</details>
 
-<div class="card border-0 shadow-lg" style="border-radius: 16px;">
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover mb-0 align-middle contributions-table">
-                <thead style="background: #FFFFFF; border-bottom: 3px solid #D4AF37; color: #000000 !important;">
+            <table class="table table-bordered table-hover table-sm mb-0 align-middle contributions-table">
+                <thead style="background: #FFF9D6; border-bottom: 2px solid #FFD700; color: #000000 !important;">
             <tr>
                 <th rowspan="2" class="col-sn" style="font-weight: 600; color: #000000 !important; background: transparent !important;">#</th>
                 <th rowspan="2" class="col-member-no" style="font-weight: 600; color: #000000 !important; background: transparent !important;">Mbr<br>No</th>
@@ -217,6 +243,9 @@
                 </th>
                 <th colspan="{{ count($monthlyKeys) }}" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Monthly (KES)
+                </th>
+                <th rowspan="2" class="col-total-paid" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
+                    Total Paid<br><small>(KES)</small>
                 </th>
                 <th rowspan="2" class="col-outstanding" style="font-weight: 600; color: #000000 !important; background: transparent !important;">
                     Outstanding<br><small>(KES)</small>
@@ -255,12 +284,12 @@
             @forelse($rows as $row)
                 <tr class="align-middle">
                     <td class="fw-semibold text-center">{{ $loop->iteration }}</td>
-                    <td class="fw-semibold text-center">{{ $row['member']->member_no }}</td>
+                    <td class="fw-semibold text-center">QBM{{ $row['member']->member_no }}</td>
                     <td class="fw-semibold" style="text-align: left !important;">{{ $row['member']->name }}</td>
-                    <td class="fw-semibold text-center" style="font-size: 1rem; letter-spacing: 1px; font-weight: 700;">{{ $row['initials'] }}</td>
+                    <td class="fw-semibold text-center" style="font-size: 0.9rem; letter-spacing: 0.5px; font-weight: 700;">{{ $row['initials'] }}</td>
                     <td>
                         @if(isset($row['registration_fee']) && $row['registration_fee'] > 0)
-                            <span class="badge fw-semibold" style="background: #D4AF37; color: #000000;">{{ number_format($row['registration_fee'], 2) }}</span>
+                            <span class="badge fw-semibold" style="background: #FFD700; color: #000000;">{{ number_format($row['registration_fee'], 2) }}</span>
                         @else
                             <span class="text-muted">-</span>
                         @endif
@@ -331,20 +360,26 @@
                             </td>
                         @endforeach
                     @endif
+                    @php
+                        $yearTotal = collect($row['months'] ?? [])->sum();
+                    @endphp
+                    <td class="fw-semibold text-end">
+                        {{ $yearTotal > 0 ? number_format($yearTotal, 2) : '-' }}
+                    </td>
                     <td>
                         @if($row['outstanding'] > 0)
-                            <span class="badge fw-semibold" style="background: #000000; color: #FFFFFF;">{{ number_format($row['outstanding'], 2) }}</span>
+                            <span class="badge fw-semibold" style="background: #111111; color: #FFFFFF;">{{ number_format($row['outstanding'], 2) }}</span>
                         @else
-                            <span class="badge fw-semibold" style="background: #D4AF37; color: #000000;">{{ number_format($row['outstanding'], 2) }}</span>
+                            <span class="badge fw-semibold" style="background: #FFD700; color: #000000;">{{ number_format($row['outstanding'], 2) }}</span>
                         @endif
                     </td>
                     <td>
                         @if($row['aging'] > 3)
-                            <span class="badge fw-semibold" style="background: #000000; color: #FFFFFF;">{{ $row['aging'] }}</span>
+                            <span class="badge fw-semibold" style="background: #111111; color: #FFFFFF;">{{ $row['aging'] }}</span>
                         @elseif($row['aging'] > 0)
-                            <span class="badge fw-semibold" style="background: #D4AF37; color: #000000;">{{ $row['aging'] }}</span>
+                            <span class="badge fw-semibold" style="background: #FFD700; color: #000000;">{{ $row['aging'] }}</span>
                         @else
-                            <span class="badge fw-semibold" style="background: #D4AF37; color: #000000;">{{ $row['aging'] }}</span>
+                            <span class="badge fw-semibold" style="background: #FFD700; color: #000000;">{{ $row['aging'] }}</span>
                         @endif
                     </td>
                 </tr>

@@ -3,380 +3,293 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<!-- Hero Header -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-lg position-relative overflow-hidden" style="background: #FFFFFF; border-bottom: 3px solid #FFD700; min-height: 180px;">
-            <div class="position-absolute" style="top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255, 215, 0, 0.1); border-radius: 50%;"></div>
-            <div class="position-absolute" style="bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255, 215, 0, 0.08); border-radius: 50%;"></div>
-            <div class="card-body p-5 position-relative" style="z-index: 1;">
-                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                    <div>
-                        <h2 class="mb-3 fw-bold" style="font-size: 1.75rem; color: #000000;">
-                            <i class="bi bi-shield-check me-2" style="color: #FFD700;"></i>Admin Dashboard
-                        </h2>
-                        <p class="mb-0" style="font-size: 1rem; color: #666;">
-                            Complete control center for managing QBASH Pool League operations
-                        </p>
-                    </div>
-                    <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
-                        <span class="badge px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid #FFD700;">
-                            <i class="bi bi-wifi me-1"></i>Online
-                        </span>
-                        <span class="badge px-3 py-2" style="background: #FFD700; color: #000000;">
-                            <i class="bi bi-shield-lock me-1"></i>Admin Access
-                        </span>
-                    </div>
-                </div>
-            </div>
+@php
+    $totalContributions = \App\Models\Contribution::count();
+    $approvalRate = $totalMembers > 0 ? min(100, round((($totalMembers - $pendingApprovals) / $totalMembers) * 100)) : 0;
+    $memberRatio = $totalUsers > 0 ? min(100, round(($totalMembers / $totalUsers) * 100)) : 0;
+@endphp
+<div class="admin-board">
+    <div class="board-top d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div>
+            <div class="board-eyebrow">Admin overview</div>
+            <h2 class="board-title mb-1">QBASH Admin Dashboard</h2>
+            <p class="board-subtitle mb-0">Track members, approvals, contributions, and league activity.</p>
+        </div>
+        <div class="board-actions d-flex align-items-center gap-2">
+            <span class="badge badge-soft-gold">Online</span>
+            <span class="badge badge-gold">Admin access</span>
+            <span class="board-meta text-muted small">Updated {{ now()->format('M d, Y') }}</span>
         </div>
     </div>
-</div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
-        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
-        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert" style="border-radius: 12px;">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-<!-- Key Statistics Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-3 col-md-6">
-        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
-                <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
-                        <i class="bi bi-people-fill" style="font-size: 1.8rem; color: #FFD700;"></i>
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="board-card h-100 stat-tile">
+                <div class="board-card-body">
+                    <div class="stat-row">
+                        <div>
+                            <div class="stat-label">Total members</div>
+                            <div class="stat-value">{{ $totalMembers }}</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
                     </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
-                        <i class="bi bi-arrow-up"></i>
-                    </span>
+                    <div class="small text-muted">Registered pool league members</div>
                 </div>
-                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Total Members</h6>
-                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #000000;">{{ $totalMembers }}</h2>
-                <p class="text-muted small mb-0 mt-2">Active pool league members</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="board-card h-100 stat-tile">
+                <div class="board-card-body">
+                    <div class="stat-row">
+                        <div>
+                            <div class="stat-label">Total users</div>
+                            <div class="stat-value">{{ $totalUsers }}</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted">Users with portal access</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="board-card h-100 stat-tile">
+                <div class="board-card-body">
+                    <div class="stat-row">
+                        <div>
+                            <div class="stat-label">Contributions</div>
+                            <div class="stat-value">{{ $totalContributions }}</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted">Total payment records</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="board-card h-100 stat-tile">
+                <div class="board-card-body">
+                    <div class="stat-row">
+                        <div>
+                            <div class="stat-label">Pending approvals</div>
+                            <div class="stat-value">{{ $pendingApprovals }}</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted">Awaiting member approvals</div>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-3 col-md-6">
-        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
-                <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
-                        <i class="bi bi-person-check-fill" style="font-size: 1.8rem; color: #FFD700;"></i>
-                    </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
-                        <i class="bi bi-check-circle"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Total Users</h6>
-                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #000000;">{{ $totalUsers }}</h2>
-                <p class="text-muted small mb-0 mt-2">Registered system users</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6">
-        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
-                <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
-                        <i class="bi bi-hourglass-split" style="font-size: 1.8rem; color: #FFD700;"></i>
-                    </div>
-                    @if($pendingApprovals > 0)
-                    <span class="badge rounded-pill px-3 py-2" style="background: #FFD700; color: #000000; font-size: 0.75rem; animation: pulse 2s infinite;">
-                        <i class="bi bi-exclamation-triangle"></i> {{ $pendingApprovals }}
-                    </span>
-                    @else
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
-                        <i class="bi bi-check-circle"></i>
-                    </span>
-                    @endif
-                </div>
-                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Pending Approvals</h6>
-                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #FFD700;">{{ $pendingApprovals }}</h2>
-                <p class="text-muted small mb-0 mt-2">Awaiting member approval</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6">
-        <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="border-radius: 16px; transition: all 0.3s ease;">
-            <div class="position-absolute top-0 end-0" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%); border-radius: 0 0 0 100px;"></div>
-            <div class="card-body p-4 position-relative" style="border-left: 4px solid #FFD700;">
-                <div class="d-flex align-items-start justify-content-between mb-3">
-                    <div class="rounded-circle p-3" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);">
-                        <i class="bi bi-cash-stack" style="font-size: 1.8rem; color: #FFD700;"></i>
-                    </div>
-                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 0.75rem;">
-                        <i class="bi bi-currency-exchange"></i>
-                    </span>
-                </div>
-                <h6 class="text-muted text-uppercase small mb-2 fw-semibold" style="letter-spacing: 1px;">Contributions</h6>
-                <h2 class="fw-bold mb-0" style="font-size: 1.9rem; color: #000000;">{{ \App\Models\Contribution::count() }}</h2>
-                <p class="text-muted small mb-0 mt-2">Total payment records</p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Pending Approvals Alert -->
-@if($pendingUsers->count() > 0)
-<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
-    <div class="card-header border-0 py-4" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <h5 class="mb-1 fw-bold" style="color: #000000;">
-                    <i class="bi bi-hourglass-split me-2" style="color: #D4AF37;"></i>Pending Member Approvals
-                </h5>
-                <p class="mb-0 text-muted small">Action required: {{ $pendingUsers->count() }} user(s) need member approval</p>
+    <div class="row g-3 mb-4">
+        <div class="col-xl-8">
+            <div class="board-card h-100">
+                <div class="board-card-header">
+                    <span>Performance overview</span>
+                    <span class="board-pill">Summary</span>
+                </div>
+                <div class="board-card-body">
+                    <div class="overview-row">
+                        <div>
+                            <div class="overview-label">Contribution records</div>
+                            <div class="overview-value">{{ $totalContributions }}</div>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {{ min(100, $totalContributions) }}%"></div>
+                            </div>
+                            <span class="small text-muted">Tracking total contributions</span>
+                        </div>
+                    </div>
+                    <div class="overview-row">
+                        <div>
+                            <div class="overview-label">Approval rate</div>
+                            <div class="overview-value">{{ $approvalRate }}%</div>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {{ $approvalRate }}%"></div>
+                            </div>
+                            <span class="small text-muted">Approved members</span>
+                        </div>
+                    </div>
+                    <div class="overview-row">
+                        <div>
+                            <div class="overview-label">Members vs users</div>
+                            <div class="overview-value">{{ $memberRatio }}%</div>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {{ $memberRatio }}%"></div>
+                            </div>
+                            <span class="small text-muted">Membership coverage</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="badge px-3 py-2" style="background: #D4AF37; color: #000000; font-size: 1rem;">{{ $pendingUsers->count() }}</span>
+        </div>
+        <div class="col-xl-4">
+            <div class="board-card h-100">
+                <div class="board-card-header">
+                    <span>Focus areas</span>
+                    <span class="board-pill">Insights</span>
+                </div>
+                <div class="board-card-body d-flex flex-column align-items-center gap-3">
+                    <div class="donut"></div>
+                    <div class="small text-muted text-center">Members, approvals, and contributions focus</div>
+                    <div class="focus-legend">
+                        <span><i></i>Members</span>
+                        <span><i></i>Approvals</span>
+                        <span><i></i>Contributions</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead style="background: rgba(212, 175, 55, 0.1);">
-                    <tr>
-                        <th class="px-4" style="font-weight: 600;">#</th>
-                        <th class="px-4" style="font-weight: 600;">Name</th>
-                        <th class="px-4" style="font-weight: 600;">Email</th>
-                        <th class="px-4" style="font-weight: 600;">Phone</th>
-                        <th class="px-4" style="font-weight: 600;">Registered</th>
-                        <th class="px-4" style="font-weight: 600;">Link to Member</th>
-                        <th class="px-4 text-center" style="font-weight: 600;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($pendingUsers as $user)
-                    <tr>
-                        <td class="px-4">{{ $loop->iteration }}</td>
-                        <td class="px-4 fw-semibold">{{ $user->name }}</td>
-                        <td class="px-4"><small>{{ $user->email }}</small></td>
-                        <td class="px-4">
-                            @if($user->phone)
-                                <i class="bi bi-telephone me-1 text-muted"></i>{{ $user->phone }}
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
-                        <td class="px-4">
-                            <small class="text-muted">{{ $user->created_at->format('M d, Y') }}</small>
-                        </td>
-                        <td class="px-4">
-                            <form action="{{ route('admin.approve-user', $user->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <div class="input-group input-group-sm" style="width: 280px;">
-                                    <select name="member_id" class="form-select" required style="border-radius: 8px 0 0 8px;">
-                                        <option value="">Select Member...</option>
-                                        @foreach(\App\Models\Member::whereDoesntHave('users')->get() as $member)
-                                            <option value="{{ $member->id }}">{{ $member->member_no }} - {{ $member->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="submit" class="btn" style="background: #D4AF37; color: #000000; border-radius: 0 8px 8px 0;">
-                                        <i class="bi bi-check-lg"></i> Approve
-                                    </button>
-                                </div>
-                            </form>
-                        </td>
-                        <td class="px-4 text-center">
-                            <a href="{{ route('profile.edit', $user->id) }}" class="btn btn-sm" style="background: #000000; color: #FFFFFF; border: 1px solid #D4AF37; border-radius: 8px;" title="View Profile">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-@else
-<div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-    <div class="card-body text-center py-5">
-        <div class="mb-3">
-            <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #D4AF37;"></i>
-        </div>
-        <h4 class="mb-2 fw-bold">All Clear!</h4>
-        <p class="text-muted mb-0">No pending member approvals at this time.</p>
-    </div>
-</div>
-@endif
 
-<!-- Quick Actions Grid -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #D4AF37;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-people-fill" style="font-size: 1.6rem; color: #D4AF37;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">Members Management</h6>
-                        <p class="text-muted small mb-0">Manage all registered members</p>
-                    </div>
+    @if($pendingUsers->count() > 0)
+        <div class="board-card mb-4">
+            <div class="board-card-header">
+                <span>Pending member approvals</span>
+                <span class="badge badge-gold">{{ $pendingUsers->count() }}</span>
+            </div>
+            <div class="board-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table board-table mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th class="px-4">#</th>
+                                <th class="px-4">Name</th>
+                                <th class="px-4">Email</th>
+                                <th class="px-4">Phone</th>
+                                <th class="px-4">Registered</th>
+                                <th class="px-4">Link to Member</th>
+                                <th class="px-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pendingUsers as $user)
+                                <tr>
+                                    <td class="px-4">{{ $loop->iteration }}</td>
+                                    <td class="px-4 fw-semibold">{{ $user->name }}</td>
+                                    <td class="px-4"><small>{{ $user->email }}</small></td>
+                                    <td class="px-4">
+                                        @if($user->phone)
+                                            <i class="bi bi-telephone me-1 text-muted"></i>{{ $user->phone }}
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4">
+                                        <small class="text-muted">{{ $user->created_at->format('M d, Y') }}</small>
+                                    </td>
+                                    <td class="px-4">
+                                        <form action="{{ route('admin.approve-user', $user->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <div class="input-group input-group-sm" style="width: 260px;">
+                                                <select name="member_id" class="form-select" required style="border-radius: 8px 0 0 8px;">
+                                                    <option value="">Select Member...</option>
+                                                    @foreach(\App\Models\Member::whereDoesntHave('users')->get() as $member)
+                                                        <option value="{{ $member->id }}">{{ $member->member_no }} - {{ $member->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="submit" class="btn btn-gold" style="border-radius: 0 8px 8px 0;">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td class="px-4 text-center">
+                                        <a href="{{ route('profile.edit', $user->id) }}" class="btn btn-sm btn-outline-dark-gold" title="View Profile">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <a href="{{ route('members.index') }}" class="btn w-100" style="background: #000000; color: #FFFFFF; border: 2px solid #D4AF37; border-radius: 10px;">
-                    <i class="bi bi-arrow-right-circle me-2"></i>Go to Members
-                </a>
             </div>
         </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #D4AF37;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-cash-stack" style="font-size: 1.6rem; color: #D4AF37;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">Contributions</h6>
-                        <p class="text-muted small mb-0">Track member payments</p>
-                    </div>
+    @else
+        <div class="board-card mb-4">
+            <div class="board-card-body text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-check-circle-fill" style="font-size: 3rem; color: #FFD700;"></i>
                 </div>
-                <a href="{{ route('contributions.index') }}" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 10px;">
-                    <i class="bi bi-arrow-right-circle me-2"></i>View Contributions
-                </a>
+                <h4 class="mb-2 fw-bold">All clear</h4>
+                <p class="text-muted mb-0">No pending member approvals at this time.</p>
             </div>
         </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #D4AF37;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-trophy" style="font-size: 1.6rem; color: #D4AF37;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">QPL Games</h6>
-                        <p class="text-muted small mb-0">Manage pool league</p>
-                    </div>
-                </div>
-                <a href="{{ route('qpl-games.index') }}" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 10px;">
-                    <i class="bi bi-trophy me-2"></i>Manage QPL
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #25D366;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.15) 0%, rgba(37, 211, 102, 0.05) 100%);">
-                        <i class="bi bi-whatsapp" style="font-size: 1.6rem; color: #25D366;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">WhatsApp Reminders</h6>
-                        <p class="text-muted small mb-0">Send payment reminders</p>
-                    </div>
-                </div>
-                <a href="{{ route('whatsapp.index') }}" class="btn w-100" style="background: #25D366; color: #FFFFFF; border-radius: 10px;">
-                    <i class="bi bi-whatsapp me-2"></i>Send Reminders
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #D4AF37;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-credit-card" style="font-size: 1.6rem; color: #D4AF37;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">Payment Requests</h6>
-                        <p class="text-muted small mb-0">
-                            @php $pendingPayments = \App\Models\PaymentRequest::where('status', 'pending')->count(); @endphp
-                            @if($pendingPayments > 0)
-                                <span class="fw-semibold" style="color: #D4AF37;">{{ $pendingPayments }} pending</span>
-                            @else
-                                All clear
-                            @endif
-                        </p>
-                    </div>
-                </div>
-                <a href="{{ route('admin.payment-requests') }}" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 10px;">
-                    <i class="bi bi-credit-card me-2"></i>Review Payments
-                    @if($pendingPayments > 0)
-                        <span class="badge ms-2" style="background: #000000; color: #FFFFFF;">{{ $pendingPayments }}</span>
-                    @endif
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 col-md-6">
-        <div class="card border-0 shadow-lg h-100" style="border-radius: 16px; transition: all 0.3s ease; border-top: 3px solid #D4AF37;">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="rounded-circle p-3 me-3" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
-                        <i class="bi bi-calendar-event" style="font-size: 1.6rem; color: #D4AF37;"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-bold">Calendar Activities</h6>
-                        <p class="text-muted small mb-0">Manage events & meetings</p>
-                    </div>
-                </div>
-                <a href="{{ route('calendar-activities.index') }}" class="btn w-100" style="background: #D4AF37; color: #000000; border-radius: 10px;">
-                    <i class="bi bi-calendar-plus me-2"></i>Manage Calendar
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+    @endif
 
-<!-- Reports Section -->
-<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; border-left: 4px solid #D4AF37;">
-    <div class="card-header border-0 py-4" style="background: rgba(212, 175, 55, 0.1); border-radius: 16px 16px 0 0;">
-        <h5 class="mb-0 fw-bold" style="color: #000000;">
-            <i class="bi bi-file-earmark-text me-2" style="color: #D4AF37;"></i>Reports & Analytics
-        </h5>
-    </div>
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="d-flex align-items-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
-                    <div class="rounded-circle p-3 me-3" style="background: rgba(212, 175, 55, 0.1);">
-                        <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; color: #D4AF37;"></i>
+    <div class="row g-3">
+        <div class="col-lg-4 col-md-6">
+            <div class="board-card h-100">
+                <div class="board-card-body">
+                    <div class="action-row">
+                        <div class="action-icon"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <div class="fw-semibold">Members management</div>
+                            <div class="small text-muted">Manage all registered members</div>
+                        </div>
                     </div>
-                    <div class="flex-grow-1">
-                        <h6 class="fw-bold mb-1">Outstanding Balances</h6>
-                        <p class="text-muted small mb-0">Download report of members with outstanding balances</p>
-                    </div>
-                    <a href="{{ route('reports.outstanding-balances') }}" class="btn btn-sm" style="background: #D4AF37; color: #000000; border-radius: 8px;">
-                        <i class="bi bi-download me-1"></i>Download
+                    <a href="{{ route('members.index') }}" class="btn w-100 btn-outline-dark-gold mt-3">
+                        Go to Members
                     </a>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="d-flex align-items-center p-4 border rounded" style="border-radius: 12px; background: rgba(212, 175, 55, 0.03);">
-                    <div class="rounded-circle p-3 me-3" style="background: rgba(212, 175, 55, 0.1);">
-                        <i class="bi bi-trophy" style="font-size: 1.5rem; color: #D4AF37;"></i>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="board-card h-100">
+                <div class="board-card-body">
+                    <div class="action-row">
+                        <div class="action-icon"><i class="bi bi-cash-stack"></i></div>
+                        <div>
+                            <div class="fw-semibold">Contributions</div>
+                            <div class="small text-muted">Track member payments</div>
+                        </div>
                     </div>
-                    <div class="flex-grow-1">
-                        <h6 class="fw-bold mb-1">Best Contributors</h6>
-                        <p class="text-muted small mb-0">Download report of top contributing members</p>
+                    <a href="{{ route('contributions.index') }}" class="btn w-100 btn-gold mt-3">
+                        View Contributions
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="board-card h-100">
+                <div class="board-card-body">
+                    <div class="action-row">
+                        <div class="action-icon"><i class="bi bi-trophy"></i></div>
+                        <div>
+                            <div class="fw-semibold">QPL games</div>
+                            <div class="small text-muted">Manage pool league</div>
+                        </div>
                     </div>
-                    <a href="{{ route('reports.best-contributors') }}" class="btn btn-sm" style="background: #D4AF37; color: #000000; border-radius: 8px;">
-                        <i class="bi bi-download me-1"></i>Download
+                    <a href="{{ route('qpl-games.index') }}" class="btn w-100 btn-gold mt-3">
+                        Manage QPL
                     </a>
                 </div>
             </div>
@@ -385,14 +298,239 @@
 </div>
 
 <style>
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
+    .admin-board .board-top {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        border-radius: 16px;
     }
-    
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+
+    .board-eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.7rem;
+        color: #6b6b6b;
+        margin-bottom: 0.3rem;
+    }
+
+    .board-title {
+        font-size: 1.55rem;
+        font-weight: 700;
+        color: #111111;
+    }
+
+    .board-subtitle {
+        color: #6b6b6b;
+        font-size: 0.95rem;
+    }
+
+    .board-card {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .board-card-header {
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        color: #111111;
+    }
+
+    .board-card-body {
+        padding: 1.25rem;
+    }
+
+    .stat-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #6b6b6b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #111111;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(255, 215, 0, 0.18);
+        color: #111111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .board-pill {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: rgba(255, 215, 0, 0.15);
+        color: #9c7b00;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+    }
+
+    .badge-gold {
+        background: #FFD700;
+        color: #111111;
+    }
+
+    .badge-soft-gold {
+        background: rgba(255, 215, 0, 0.15);
+        color: #9c7b00;
+        border: 1px solid rgba(255, 215, 0, 0.4);
+    }
+
+
+    .overview-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .overview-row:last-child {
+        border-bottom: none;
+    }
+
+    .overview-label {
+        font-size: 0.85rem;
+        color: #6b6b6b;
+    }
+
+    .overview-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .overview-progress {
+        flex: 1;
+        max-width: 320px;
+    }
+
+    .progress {
+        height: 8px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 999px;
+    }
+
+    .progress-bar {
+        background: #FFD700;
+    }
+
+    .donut {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: conic-gradient(#FFD700 0 45%, #111111 45% 70%, rgba(0,0,0,0.15) 70% 100%);
+        position: relative;
+    }
+
+    .donut::after {
+        content: '';
+        position: absolute;
+        inset: 18px;
+        background: #ffffff;
+        border-radius: 50%;
+    }
+
+    .focus-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: #6b6b6b;
+    }
+
+    .focus-legend span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .focus-legend span i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #FFD700;
+    }
+
+    .focus-legend span:nth-child(2) i {
+        background: #111111;
+    }
+
+    .focus-legend span:nth-child(3) i {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .board-table thead {
+        background: rgba(255, 215, 0, 0.12);
+    }
+
+    .board-table th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #111111;
+    }
+
+    .btn-gold {
+        background: #FFD700;
+        color: #111111;
+        border-radius: 10px;
+    }
+
+    .btn-gold:hover {
+        background: #f0c800;
+        color: #111111;
+    }
+
+    .btn-outline-dark-gold {
+        background: #111111;
+        color: #ffffff;
+        border: 1px solid #FFD700;
+        border-radius: 10px;
+    }
+
+    .btn-outline-dark-gold:hover {
+        background: #1c1c1c;
+        color: #ffffff;
+    }
+
+    .action-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .action-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(255, 215, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FFD700;
+        font-size: 1.2rem;
     }
 </style>
 @endsection

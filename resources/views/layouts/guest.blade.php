@@ -16,6 +16,24 @@
 
         <!-- Optional: your compiled assets (if you still use them) -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            body {
+                font-size: 0.95rem;
+            }
+
+            h1, .h1 { font-size: 1.55rem; }
+            h2, .h2 { font-size: 1.35rem; }
+            h3, .h3 { font-size: 1.2rem; }
+            h4, .h4 { font-size: 1.05rem; }
+            h5, .h5 { font-size: 0.95rem; }
+
+            .lead { font-size: 0.98rem; }
+            .badge { font-size: 0.72rem; }
+            .btn { font-size: 0.9rem; }
+            .form-label { font-size: 0.9rem; }
+            .form-control, .form-select { font-size: 0.9rem; }
+        </style>
     </head>
     <body class="bg-light" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
         {{-- Support both component slot (<x-guest-layout>) and @section("content") --}}

@@ -24,7 +24,7 @@
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light" style="background: linear-gradient(135deg, #D4AF37 0%, #c5a030 100%); color: white;">
+                <thead class="table-light" style="background: linear-gradient(135deg, #FFD700 0%, #c5a030 100%); color: white;">
                     <tr>
                         <th class="text-white">Date</th>
                         <th class="text-white">Member A</th>
@@ -51,7 +51,7 @@
                                 <i class="bi bi-calendar3 me-1 text-muted"></i>
                                 {{ $game->game_date->format('M d, Y') }}
                                 @if($isClose && $isHighScoring)
-                                    <i class="bi bi-star-fill ms-1" style="color: #D4AF37;" title="Exciting Game!"></i>
+                                    <i class="bi bi-star-fill ms-1" style="color: #FFD700;" title="Exciting Game!"></i>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->home_team }}</td>
@@ -62,17 +62,17 @@
                                     if ($isHighScoring) $badgeClass = 'bg-danger';
                                     elseif ($isClose) {
                                         $badgeClass = '';
-                                        $badgeStyle = 'background: #D4AF37; color: #000000;';
+                                        $badgeStyle = 'background: #FFD700; color: #000000;';
                                     }
                                 @endphp
                                 <span class="badge {{ $badgeClass }} fs-6 px-3 py-2 fw-bold" style="{{ $badgeStyle }}">
                                     {{ $game->home_score }} - {{ $game->away_score }}
                                 </span>
                                 @if($isClose)
-                                    <br><small class="fw-semibold" style="color: #D4AF37;"><i class="bi bi-lightning-charge"></i> Close!</small>
+                                    <br><small class="fw-semibold" style="color: #FFD700;"><i class="bi bi-lightning-charge"></i> Close!</small>
                                 @endif
                                 @if($isHighScoring)
-                                    <br><small class="fw-semibold" style="color: #D4AF37;"><i class="bi bi-fire"></i> {{ $totalGoals }} Goals!</small>
+                                    <br><small class="fw-semibold" style="color: #FFD700;"><i class="bi bi-fire"></i> {{ $totalGoals }} Goals!</small>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $game->away_team }}</td>

@@ -3,7 +3,7 @@
 @section('title', 'QBASH Pool League Standings')
 
 @section('content')
-<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #D4AF37 0%, #c5a030 100%);">
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #FFD700 0%, #c5a030 100%);">
     <div class="card-body text-white">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div>
@@ -37,24 +37,24 @@
 <!-- League Statistics -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #D4AF37 !important;">
+        <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #FFD700 !important;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="rounded-circle p-3 me-3" style="background: rgba(212, 175, 55, 0.1);">
                         <!-- Pool Table Icon -->
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block;">
                             <!-- Table outline -->
-                            <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="#D4AF37"/>
+                            <rect x="3" y="6" width="18" height="12" rx="1" fill="none" stroke="#FFD700"/>
                             <!-- Pockets -->
-                            <circle cx="3" cy="6" r="1.5" fill="#D4AF37"/>
-                            <circle cx="21" cy="6" r="1.5" fill="#D4AF37"/>
-                            <circle cx="3" cy="18" r="1.5" fill="#D4AF37"/>
-                            <circle cx="21" cy="18" r="1.5" fill="#D4AF37"/>
+                            <circle cx="3" cy="6" r="1.5" fill="#FFD700"/>
+                            <circle cx="21" cy="6" r="1.5" fill="#FFD700"/>
+                            <circle cx="3" cy="18" r="1.5" fill="#FFD700"/>
+                            <circle cx="21" cy="18" r="1.5" fill="#FFD700"/>
                             <!-- Center line -->
-                            <line x1="12" y1="6" x2="12" y2="18" stroke="#D4AF37" stroke-width="0.8"/>
+                            <line x1="12" y1="6" x2="12" y2="18" stroke="#FFD700" stroke-width="0.8"/>
                             <!-- Pool balls -->
-                            <circle cx="8" cy="12" r="1.5" fill="#D4AF37"/>
-                            <circle cx="16" cy="12" r="1.5" fill="#D4AF37"/>
+                            <circle cx="8" cy="12" r="1.5" fill="#FFD700"/>
+                            <circle cx="16" cy="12" r="1.5" fill="#FFD700"/>
                         </svg>
                     </div>
                     <div>
@@ -169,7 +169,7 @@
                         <tr class="{{ $index === 0 ? 'table-warning' : '' }}" style="{{ $index === 0 ? 'background-color: rgba(255, 193, 7, 0.1) !important;' : '' }}">
                             <td class="fw-bold text-center" style="font-size: 1.1rem;">
                                 @if($index === 0)
-                                    <span class="badge" style="background: #D4AF37; color: #000000; font-size: 1rem; padding: 6px 10px;">
+                                    <span class="badge" style="background: #FFD700; color: #000000; font-size: 1rem; padding: 6px 10px;">
                                         <i class="bi bi-trophy-fill me-1"></i>{{ $index + 1 }}
                                     </span>
                                 @elseif($index === 1)
@@ -186,7 +186,7 @@
                             </td>
                             <td class="fw-semibold" style="font-size: 1rem;">
                                 @if($index === 0)
-                                    <i class="bi bi-star-fill me-1" style="color: #D4AF37;"></i>
+                                    <i class="bi bi-star-fill me-1" style="color: #FFD700;"></i>
                                 @endif
                                 {{ $row['name'] }}
                             </td>
@@ -303,6 +303,7 @@
 </div>
 @endif
 
+@if($playedStandings->count() > 0)
         <div class="card border-0 shadow-sm">
     <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
         <h4 class="mb-0 fw-bold text-primary">
@@ -330,7 +331,7 @@
                                         <span class="badge bg-success me-1">{{ $member['won'] }}W</span>
                                         <span class="badge bg-info me-1">{{ $member['drawn'] }}D</span>
                                         <span class="badge bg-danger me-1">{{ $member['lost'] }}L</span>
-                                        <span class="badge" style="background: #D4AF37; color: #000000;">{{ $member['points'] }} Pts</span>
+                                        <span class="badge" style="background: #FFD700; color: #000000;">{{ $member['points'] }} Pts</span>
                                     </div>
                                 </div>
                             </button>
